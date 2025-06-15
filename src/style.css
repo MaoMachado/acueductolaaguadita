@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --verde-principal: #2e7d32; /*VERDE BOSQUE*/
+  --beige-principal: #f5f5dc; /*BEIGE CLÁSICO*/
+
+  /* COLORES COMPLEMENTARIOS */
+  --verde-claro: #4caf50; /*PARA BOTONES HOVER Y HACENTOS*/
+  --verde-oscuro: #1b5e20; /*PARA TEXTOS Y ELEMENTOS IMPORTANTES*/
+  --beige-oscuro: #d4c5a0; /*PARA BORDES Y SEPARADORES*/
+  --crema: #fff8dc; /*PARA FONDOS ALTERNATIVOS*/
+
+  /* COLORES DE APOYO */
+  --blanco: #fff; /*PARA CONTRASTE Y ESPACIOS*/
+  --gris-suave: #f0f0f0; /*PARA FONDOS NEUTROS*/
+  --marron-suave: #8d6e63; /*PARA TEXTOS SECUNDARIOS*/
+
+  /* FUENTES PRINCIPALES */
+  --fuente-titulo: "Inter", sans-serif;
+  --fuente-parrafo: "SourceSans", sans-serif;
+
+  /* ANCHOS PRINCIPALES */
+  --ancho-fijo-central: clamp(300px, 100vh, 1000px);
+  --ancho-fijo-menu: clamp(300px, 100vh, 400px);
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter/Inter-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-stretch: 50% 200%;
+}
+
+@font-face {
+  font-family: "SourceSans";
+  src: url("/fonts/SourceSansPro/SourceSans3-VF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-stretch: 50% 200%;
+}
