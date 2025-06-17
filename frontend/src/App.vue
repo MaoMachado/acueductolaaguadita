@@ -1,21 +1,62 @@
 <script setup>
 import Header from './components/common/Header.vue';
 import Sidebar from './components/common/Sidebar.vue';
-
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
-    <Header />
-
-    <div class="flex flex-1">
+  <section class="flex min-h-screen">
+    <div class="container_header flex flex-col gap-10 w-fit p-4 h-screen">
+      <Header />
       <Sidebar />
-      <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
-        <router-view />
-      </main>
     </div>
-
-  </div>
+    <main class="w-screen">
+      <router-view />
+    </main>
+  </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container_header {
+  background: linear-gradient(180deg, var(--verde-principal) 0%, var(--verde-claro) 100%);
+  border-inline-end: 2px solid var(--beige-oscuro);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  color: var(--blanco);
+}
+
+.container_header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+  pointer-events: none;
+}
+
+main {
+  background: linear-gradient(45deg,
+      var(--beige-principal),
+      var(--crema),
+      var(--beige-oscuro),
+      var(--gris-suave));
+  background-size: 300% 300%;
+  animation: gradienteMovimiento 4s ease infinite;
+}
+
+@keyframes gradienteMovimiento {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+</style>

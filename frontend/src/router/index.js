@@ -7,7 +7,48 @@ import Archivos from '../views/Archivos.vue';
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/galeria', name: 'Galeria', component: Galeria },
-  { path: '/archivos', name: 'Archivos', component: Archivos }
+  { path: '/archivos', name: 'Archivos', component: Archivos },
+  {
+    path: '/nosotros',
+    component: () => import('../views/nosotros/NosotrosLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'QuienesSomos',
+        component: () => import('../views/nosotros/QuienesSomos.vue')
+      },
+      {
+        path: 'valores',
+        name: 'CompromisoValores',
+        component: () => import('../views/nosotros/CompromisoValores.vue')
+      },
+      {
+        path: 'comunidad',
+        name: 'RepresentacionComunidad',
+        component: () => import('../views/nosotros/RepresentacionComunidad.vue')
+      },
+      {
+        path: 'poe',
+        name: 'POE',
+        component: () => import('../views/nosotros/POE.vue')
+      },
+      {
+        path: 'poblacion',
+        name: 'PoblacionBeneficiaria',
+        component: () => import('../views/nosotros/PoblacionBeneficiaria.vue')
+      },
+      {
+        path: 'estrategias',
+        name: 'Estrategias',
+        component: () => import('../views/nosotros/Estrategias.vue')
+      },
+      {
+        path: 'sociosmiembros',
+        name: 'SociosMiembros',
+        component: () => import('../views/nosotros/SociosMiembros.vue')
+      }
+    ]
+  }
 ]
 
 export const router = createRouter({

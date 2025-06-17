@@ -1,11 +1,20 @@
 <template>
-  <header class="bg-verde-principal text-white p-4 shadow">
-    <h1 class="text-xl font-bold">App de gestión interna</h1>
+  <header class="w-64 logo_section">
+    <h1>Asociación Acueducto La Aguadita</h1>
   </header>
 </template>
 
 <style scoped>
-header {
-  background-color: var(--verde-principal);
+.logo_section {
+  position: relative;
+  padding: 30px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  &>h1 {
+    font-size: 1.375em;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+  }
 }
 </style>
