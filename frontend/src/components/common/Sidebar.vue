@@ -1,28 +1,18 @@
 <template>
   <aside class="h-full w-64">
     <nav class="flex flex-col">
-      <RouterLink to="/" class="nav_item active">Inicio</RouterLink>
-      <RouterLink to="/galeria" class="nav_item">Galería</RouterLink>
-      <RouterLink to="/archivos" class="nav_item">Archivos</RouterLink>
-      <RouterLink to="/nosotros" class="nav_item">Nosotros</RouterLink>
+      <RouterLink to="/" class="nav_item" :class="{ active: route.path === '/' }">Inicio</RouterLink>
+      <RouterLink to="/galeria" class="nav_item" :class="{ active: route.path === '/galeria' }">Galería</RouterLink>
+      <RouterLink to="/archivos" class="nav_item" :class="{ active: route.path === '/archivos' }">Archivos</RouterLink>
+      <RouterLink to="/nosotros" class="nav_item" :class="{ active: route.path === '/nosotros' }">Nosotros</RouterLink>
     </nav>
   </aside>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 
-const navItems = document.querySelectorAll('.nav_item');
-navItems.forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    navItems.forEach(nav => {
-      nav.classList.remove('active');
-    });
-
-    item.classList.add('active')
-  })
-});
+const route = useRoute();
 </script>
 
 <style scoped>

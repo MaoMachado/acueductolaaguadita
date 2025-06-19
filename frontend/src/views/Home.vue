@@ -11,7 +11,7 @@ import imgMapa from '../assets/images/mapa_fresno.webp'
       </p>
     </header>
 
-    <article class="grid md:grid-cols-3 gap-6">
+    <article class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
       <div class="p-4 rounded-xl shadow-xl card">
         <h3 class="text-lg font-bold">Usuario Activos <span class="text-xl icono">👨‍👩‍👧‍👦</span></h3>
         <p class="text-3xl font-bold ">146 </p>
