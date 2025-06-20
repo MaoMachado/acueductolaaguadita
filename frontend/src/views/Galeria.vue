@@ -162,7 +162,7 @@ onMounted(() => {
             class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
             <!-- Contenedor de imagen con overlay -->
             <div class="relative overflow-hidden aspect-square">
-              <img :src="`http://localhost:3000${img.url}`" :alt="img.nombre"
+              <img :src="`${API}0${img.url}`" :alt="img.nombre"
                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 loading="lazy">
 
@@ -242,7 +242,7 @@ onMounted(() => {
 
             <!-- Imagen principal -->
             <div class="text-center">
-              <img :src="`http://localhost:3000${imagenSeleccionada?.url}`" :alt="imagenSeleccionada?.nombre"
+              <img :src="`${API}${imagenSeleccionada?.url}`" :alt="imagenSeleccionada?.nombre"
                 class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl">
 
               <!-- Información de la imagen -->
