@@ -18,7 +18,6 @@ import Sidebar from './components/common/Sidebar.vue';
 <style scoped>
 .container_header {
   background: linear-gradient(180deg, var(--verde-principal) 0%, var(--verde-claro) 100%);
-  border-inline-end: 2px solid var(--beige-oscuro);
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -39,9 +38,7 @@ import Sidebar from './components/common/Sidebar.vue';
 main {
   background: linear-gradient(45deg,
       var(--beige-principal),
-      var(--crema),
-      var(--beige-oscuro),
-      var(--gris-suave));
+      var(--blanco));
   background-size: 300% 300%;
   animation: gradienteMovimiento 4s ease infinite;
 }

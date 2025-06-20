@@ -8,16 +8,19 @@ const __dirname = path.dirname(__filename);
 // Crear conexión a la base de datos
 const db = new Database(path.join(__dirname, 'data.sqlite'));
 
-// Crear tabla si no existe
-db.exec(`
-  CREATE TABLE IF NOT EXISTS documentos (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    titulo TEXT NOT NULL,
-    filename TEXT NOT NULL,
-    url TEXT NOT NULL,
-    estado TEXT NOT NULL,
-    fecha_subida TEXT NOT NULL
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
   )
-`);
+`).run();
+
+const adminExiste = db.prepare(`SELECT * FROM usuarios WHERE username = ?`).get('admin');
+if (!adminExiste) {
+  db.prepare(`INSERT INTO usuarios (username, password) VALUES (?, ?)`).run('admin', 'admin')
+}
+
+
 
 export default db;

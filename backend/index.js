@@ -70,14 +70,14 @@ const storage = multer.diskStorage({
 //Validación avanzada de archivos
 const fileFilter = (req, file, cb) => {
   try {
-    const allowedExtension = ['.jpg', '.jpeg', '.png', '.pdf'];
+    const allowedExtension = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
 
     if (!allowedExtension.includes(fileExtension)) {
       return cb(new Error(`Extensión ${fileExtension} no permitida`), false)
     }
 
-    const allowedMimes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
     if (!allowedMimes.includes(file.mimetype)) {
       return cb(new Error('Tipo MIME no permitido'), false);
     }
@@ -91,7 +91,6 @@ const fileFilter = (req, file, cb) => {
   } catch (error) {
     cb(new Error('Error validando archivo'), false);
   }
-
 }
 
 const upload = multer({
@@ -332,6 +331,26 @@ app.delete('/imagenes/:id', async (req, res) => {
     console.error('Error eliminando imagen:', error.message)
     res.status(500).json({ error: 'Error al eliminar imagen' })
   }
+})
+
+//Método para subir la información a la tabla usuarios
+app.post('/login', express.json(), (req, res) => {
+  const username = req.body.username?.trim();
+  const password = req.body.password?.trim();
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Faltan Campos' })
+  };
+
+  const usuarios = db.prepare(`
+    SELECT * FROM usuarios WHERE username = ? AND password = ?
+  `).get(username, password)
+
+  if (!usuarios) {
+    return res.status(401).json({ error: 'Credenciales Invalidas' });
+  }
+
+  res.json({ message: 'Inicio De Sesión Exitoso' })
 })
 
 //Middleware de manejo de errores
