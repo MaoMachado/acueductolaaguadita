@@ -1,5 +1,8 @@
 <script setup>
+
 import { ref, onMounted, watch, defineProps, defineExpose } from 'vue';
+
+const API = import.meta.env.VITE_API_URL;
 
 const archivos = ref([]);
 const cargando = ref(false);
@@ -15,7 +18,7 @@ async function cargarArchivos() {
     error.value = '';
     cargando.value = true;
 
-    const res = await fetch('http://localhost:3000/documentos');
+    const res = await fetch(`${API}/documentos`);
 
     if (!res.ok) {
       throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
@@ -61,7 +64,7 @@ async function eliminar(id) {
     archivos.value = archivos.value.filter(a => a.id !== id);
 
     // 2. Llamar al backend
-    const response = await fetch(`http://localhost:3000/documentos/${id}`, {
+    const response = await fetch(`${API}/documentos/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

@@ -7,6 +7,7 @@ const error = ref('');
 const imagenSeleccionada = ref(null);
 const modalAbierto = ref(false);
 const filtroTexto = ref('');
+const API = import.meta.env.VITE_API_URL;
 
 // Función para cargar las imagenes
 async function cargarImagenes() {
@@ -14,7 +15,7 @@ async function cargarImagenes() {
   error.value = '';
 
   try {
-    const res = await fetch('http://localhost:3000/imagenes');
+    const res = await fetch(`${API}/imagenes`);
     if (!res.ok) throw new Error('Error cargando las imagenes');
 
     const data = await res.json();

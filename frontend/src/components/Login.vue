@@ -1,6 +1,8 @@
 <script setup>
 import { ref, defineEmits } from 'vue';
 
+const API = import.meta.env.VITE_API_URL;
+
 const usuario = ref('');
 const password = ref('');
 const error = ref('');
@@ -8,7 +10,7 @@ const emit = defineEmits(['login-exitoso']);
 
 async function login() {
   try {
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch(`${API}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -2,6 +2,8 @@
 
 import { ref, watch, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
 
+const API = import.meta.env.VITE_API_URL;
+
 const nuevoTitulo = ref('');
 const archivo = ref(null);
 const cargando = ref(false);
@@ -73,7 +75,7 @@ async function subirPDF() {
     cargando.value = true;
     error.value = '';
 
-    const response = await fetch('http://localhost:3000/upload', {
+    const response = await fetch(`${API}/upload`, {
       method: 'POST',
       body: formData
     });

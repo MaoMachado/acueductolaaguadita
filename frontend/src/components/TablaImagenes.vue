@@ -6,6 +6,8 @@ const props = defineProps({
   recargar: Boolean
 });
 
+const API = import.meta.env.VITE_API_URL;
+
 const imagenes = ref([]);
 const cargando = ref(false);
 const error = ref(null);
@@ -16,7 +18,7 @@ async function cargarImagenes() {
     error.value = null;
     cargando.value = true;
 
-    const res = await fetch('http://localhost:3000/imagenes');
+    const res = await fetch(`${API}/imagenes`);
 
     if (!res.ok) {
       throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
@@ -63,7 +65,7 @@ async function eliminar(id) {
     imagenes.value = imagenes.value.filter(img => img.id !== id);
 
     // 2. Llamar al backend
-    const res = await fetch(`http://localhost:3000/imagenes/${id}`, {
+    const res = await fetch(`${API}/imagenes/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -120,7 +122,7 @@ function formatearFecha(fecha) {
 function esUrlImagenValida(url) {
   if (!url) return false;
   try {
-    new URL(`http://localhost:3000${url}`);
+    new URL(`${API}${url}`);
     return true;
   } catch {
     return false;

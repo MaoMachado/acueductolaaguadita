@@ -1,5 +1,8 @@
 <script setup>
+
 import { ref, watch, defineEmits, defineProps, onMounted, onBeforeUnmount, computed } from 'vue';
+
+const API = import.meta.env.VITE_API_URL;
 
 const props = defineProps({
   mostrar: Boolean
@@ -93,7 +96,7 @@ async function subirImagen() {
     cargando.value = true;
     error.value = '';
 
-    const response = await fetch('http://localhost:3000/upload-image', {
+    const response = await fetch(`${API}/upload-image`, {
       method: 'POST',
       body: formData
     });
