@@ -1,14 +1,16 @@
 <script setup>
 import Header from './components/common/Header.vue';
 import Sidebar from './components/common/Sidebar.vue';
+import Footer from './components/common/Footer.vue';
 </script>
 
 <template>
   <section class="flex min-h-screen">
-    <div class="container_header flex flex-col gap-10 w-fit p-4 h-screen">
+    <article class="container_header flex flex-col justify-between h-screen">
       <Header />
       <Sidebar />
-    </div>
+      <Footer />
+    </article>
     <main class="w-screen">
       <router-view />
     </main>

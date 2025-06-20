@@ -1,20 +1,26 @@
+<script setup>
+import logo from '../../assets/images/logo.png'
+</script>
+
 <template>
-  <header class="w-64 logo_section">
-    <h1>Asociación Acueducto La Aguadita</h1>
+  <header class="logo_section">
+    <div class="w-30 mx-auto mb-2">
+      <img :src="logo" alt="Logo de la empresa Acueducto la Aguadita">
+    </div>
+    <!-- <h1>Asociación Acueducto La Aguadita</h1> -->
   </header>
 </template>
 
 <style scoped>
 .logo_section {
   position: relative;
-  padding: 30px 20px;
+  padding: 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
   &>h1 {
-    font-size: 1.375em;
+    font-size: 1.2em;
     font-weight: 700;
     text-align: center;
-    line-height: 1.2;
   }
 }
 </style>

@@ -227,15 +227,15 @@ function cerrarMenuMovil() {
 
 /* Sidebar */
 .sidebar {
-  width: 280px;
-  background: linear-gradient(135deg, var(--crema) 0%, var(--verde-principal) 100%);
+  width: 300px;
+  background: linear-gradient(135deg, var(--crema) 30%, var(--verde-principal) 100%);
   border-right: 1px solid rgba(148, 163, 184, 0.2);
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow-y: auto;
+  overflow-y: scroll;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
@@ -259,15 +259,17 @@ function cerrarMenuMovil() {
 
 /* Header del sidebar */
 .sidebar-header {
-  padding: 2rem 1.5rem 1.5rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
   backdrop-filter: blur(10px);
 }
 
 .sidebar-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: var(--verde-principal);
   border-radius: 1rem;
   display: flex;
@@ -300,7 +302,7 @@ function cerrarMenuMovil() {
   gap: 0.75rem;
   padding: 0.875rem 1rem;
   border-radius: 1rem;
-  color: var(--verde-oscuro);
+  color: var(--gris-claro);
   text-decoration: none;
   font-weight: 500;
   font-family: var(--fuente-titulo);
@@ -335,7 +337,7 @@ function cerrarMenuMovil() {
 .nav-link.router-link-active {
   background: var(--verde-claro);
   color: var(--blanco);
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
@@ -376,7 +378,7 @@ function cerrarMenuMovil() {
 
 .progress-bar {
   height: 100%;
-  width: 60%;
+  width: 20%;
   background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
   border-radius: 2px;
   animation: progress-animation 3s ease-in-out infinite;
@@ -386,7 +388,7 @@ function cerrarMenuMovil() {
 
   0%,
   100% {
-    width: 60%;
+    width: 20%;
   }
 
   50% {

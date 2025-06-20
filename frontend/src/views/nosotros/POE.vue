@@ -1,5 +1,5 @@
 <template>
-  <article>
+  <main>
     <h2 class="text-2xl font-semibold mb-2">
       ASOCIACION USUARIOS ACUEDUCTO LA AGUADITA PLAN OPERACIONAL DE EMERGENCIA
       (POE)
@@ -50,5 +50,11 @@
       Quebrada Chorro de Isidro se ubica en el AREA HIDROGRÁFICA MAGDALENA – CAUCA, en la ZONA HIDROGRAFICA MEDIO
       MAGDALENA y la SUBZONA HIDROGRAFICA RIO GUARINO, identificada con el Código POMCA 2302 y un área de 845 km2...
     </p>
-  </article>
+  </main>
 </template>
+
+<style scoped>
+h2 {
+  text-align: center;
+}
+</style>

@@ -1,9 +1,11 @@
 <template>
-  <aside class="h-full w-64">
+  <aside>
     <nav class="flex flex-col">
       <RouterLink to="/" class="nav_item" :class="{ active: route.path === '/' }">Inicio</RouterLink>
       <RouterLink to="/galeria" class="nav_item" :class="{ active: route.path === '/galeria' }">Galería</RouterLink>
       <RouterLink to="/archivos" class="nav_item" :class="{ active: route.path === '/archivos' }">Archivos</RouterLink>
+      <RouterLink to="/informeObra" class="nav_item" :class="{ active: route.path === '/informeObra' }">Informe De Obra
+      </RouterLink>
       <RouterLink to="/nosotros" class="nav_item" :class="{ active: route.path === '/nosotros' }">Nosotros</RouterLink>
     </nav>
   </aside>
@@ -17,7 +19,6 @@ const route = useRoute();
 
 <style scoped>
 nav {
-  padding: 20px 0;
   position: relative;
   z-index: 2;
 }

@@ -1,8 +1,8 @@
 <template>
-  <article>
-    <ol>
-      <li>FORMACIÓN EN CULTURA DEL AGUA
-        <ul>
+  <main class="p-4 bg-green-50 rounded-xl shadow">
+    <ol class="list-decimal ml-4">
+      <li class="mb-4">FORMACIÓN EN CULTURA DEL AGUA
+        <ul class="list-disc ml-4">
           <li>
             Realizar talleres participativos sobre el ciclo del agua, importancia de la fuente hídrica y buenas
             prácticas de uso.
@@ -14,8 +14,8 @@
         </ul>
       </li>
 
-      <li>CAPACITACIÓN EN GESTIÓN DEL RIESGO
-        <ul>
+      <li class="mb-4">CAPACITACIÓN EN GESTIÓN DEL RIESGO
+        <ul class="list-disc ml-4">
           <li>
             Entrenar a la comunidad en identificación de amenazas y signos de alerta temprana (turbidez, olores, fugas,
             deslizamientos).
@@ -28,7 +28,7 @@
       </li>
 
       <li>PARTICIPACIÓN EN EL MANTENIMIENTO PREVENTIVO
-        <ul>
+        <ul class="list-disc ml-4">
           <li>
             Involucrar a la comunidad en jornadas periódicas de limpieza, reforestación, mantenimiento de la
             infraestructura y protección del cauce.
@@ -39,28 +39,7 @@
         </ul>
       </li>
     </ol>
-  </article>
+  </main>
 </template>
 
-<style scoped>
-ol {
-  counter-reset: item;
-  list-style: decimal;
-
-  &>li {
-    margin-bottom: 1.2rem;
-    font-weight: bold;
-  }
-}
-
-ul {
-  list-style: circle;
-  margin-top: 10px;
-  margin-left: 1rem;
-}
-
-ul li {
-  font-weight: normal;
-  margin-bottom: 8px;
-}
-</style>
+<style scoped></style>
