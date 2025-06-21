@@ -90,13 +90,13 @@ async function subirImagen() {
 
   const formData = new FormData();
   formData.append('file', archivo.value);
-  formData.append('nombre', nombre.value.trim());
+  formData.append('titulo', nombre.value.trim());
 
   try {
     cargando.value = true;
     error.value = '';
 
-    const response = await fetch(`${API}/upload-image`, {
+    const response = await fetch(`${API}/upload`, {
       method: 'POST',
       body: formData
     });

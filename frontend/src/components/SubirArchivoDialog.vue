@@ -33,7 +33,8 @@ const infoArchivo = computed(() => {
 })
 
 function seleccionarArchivo(e) {
-  archivo.value = e.target.files[0];
+  const file = e.target.files[0];
+  archivo.value = file;
   error.value = '';
 
   if (!file) {
@@ -74,6 +75,9 @@ async function subirPDF() {
   try {
     cargando.value = true;
     error.value = '';
+
+    console.log('🎯 Archivo enviado:', archivo.value);
+    console.log('🎯 Título:', nuevoTitulo.value);
 
     const response = await fetch(`${API}/upload`, {
       method: 'POST',

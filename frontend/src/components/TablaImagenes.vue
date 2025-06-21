@@ -122,7 +122,7 @@ function formatearFecha(fecha) {
 function esUrlImagenValida(url) {
   if (!url) return false;
   try {
-    new URL(`${API}${url}`);
+    new URL(url);
     return true;
   } catch {
     return false;
@@ -197,7 +197,7 @@ defineExpose({
 
             <td class="p-3 text-center">
               <div class="flex justify-center">
-                <img v-if="esUrlImagenValida(img.url)" :src="`${API}${img.url}`" :alt="img.nombre || 'Imagen'"
+                <img v-if="esUrlImagenValida(img.url)" :src="img.url" :alt="img.nombre || 'Imagen'"
                   class="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:scale-105 transition-transform duration-200"
                   @error="manejarErrorImagen" @click="abrirImagenCompleta(`${API}${img.url}`, img.nombre)" />
                 <div v-else class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -214,8 +214,7 @@ defineExpose({
 
             <td class="p-3 text-center">
               <div class="btn-grupo flex justify-center gap-2">
-                <a v-if="esUrlImagenValida(img.url)" :href="`${API}${img.url}`" download target="_blank"
-                  rel="noopener noreferrer"
+                <a v-if="esUrlImagenValida(img.url)" :href="img.url" download target="_blank" rel="noopener noreferrer"
                   class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 text-sm">
                   Descargar
                 </a>

@@ -1,15 +1,14 @@
+import supabase from './supabaseClient.js'
+import db from './db.js';
+
 import express from 'express';
 import cors from 'cors';
-import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
+import fileUpload from 'express-fileupload';
 import sanitize from 'sanitize-filename';
-import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs/promises';
 
-//Import DB
-import db from './db.js';
 
 //Soporte ESModules
 const __filename = fileURLToPath(import.meta.url);
@@ -18,22 +17,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-//Crear directorios si no existen
-const createDirectories = async () => {
-  try {
-    await fs.mkdir(path.join(__dirname, 'uploads/images'), { recursive: true });
-    await fs.mkdir(path.join(__dirname, 'uploads/pdfs'), { recursive: true });
-  } catch (error) {
-    console.log("Directorios ya existen o error: ", error.message);
-  }
-}
-
-createDirectories();
-
-//Rutas publicas para acceder a los archivos
-app.use('/images', express.static(path.join(__dirname, 'uploads/images')));
-app.use('/pdfs', express.static(path.join(__dirname, 'uploads/pdfs')));
+app.use(fileUpload());
 
 //Rate limiting para uploads
 const uploadLimit = rateLimit({
@@ -44,152 +28,91 @@ const uploadLimit = rateLimit({
   legacyHeaders: false,
 })
 
-//Storage dinamico por tipo
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const folder = file.mimetype === 'application/pdf' ? 'pdfs' : 'images';
-    cb(null, path.join(__dirname, `uploads/${folder}`));
-  },
+// Validaciones comunes
+const validarArchivo = (archivo) => {
+  const extension = path.extname(archivo.name).toLowerCase();
+  const allowedExtension = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
+  const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 
-  filename: function (req, file, cb) {
-    try {
-      //Sanitizar nombre original
-      const originalName = sanitize(file.originalname);
-      const extension = path.extname(originalName);
-      const baseName = path.basename(originalName, extension);
+  if (!allowedExtension.includes(extension)) throw new Error(`Extensión ${extension} no permitida`);
+  if (!allowedMimes.includes(archivo.mimetype)) throw new Error('Tipo MIME no permitido');
+  if (archivo.name.length > 100) throw new Error('Nombre de archivo demasiado largo');
+};
 
-      //Crear nombre único y seguro
-      const uniqueName = `${uuidv4()}-${baseName}${extension}`
-      cb(null, uniqueName);
-    } catch (error) {
-      cb(new Error('Error procesando nombre de archivos'), false);
-    }
-  }
-});
-
-//Validación avanzada de archivos
-const fileFilter = (req, file, cb) => {
+//Método para subir IMG o PDF
+app.post('/upload', uploadLimit, async (req, res) => {
   try {
-    const allowedExtension = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
-    const fileExtension = path.extname(file.originalname).toLowerCase();
-
-    if (!allowedExtension.includes(fileExtension)) {
-      return cb(new Error(`Extensión ${fileExtension} no permitida`), false)
+    if (!req.files || !req.files.file) {
+      return res.status(400).json({ error: 'No se recibió ningún archivo' });
     }
 
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-    if (!allowedMimes.includes(file.mimetype)) {
-      return cb(new Error('Tipo MIME no permitido'), false);
-    }
-
-    //Validar tamaño del nombre del archivo
-    if (file.originalname.length > 100) {
-      return cb(new Error('Nombre del archivo demasiado grande (Máximo 100 caracteres)'), false)
-    }
-
-    cb(null, true);
-  } catch (error) {
-    cb(new Error('Error validando archivo'), false);
-  }
-}
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-    file: 1,
-    fieldSize: 1000,
-  }
-});
-
-//Método para subir la información de los pdf a la db
-app.post('/upload', uploadLimit, upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: "No se recibió ningún archivo" });
-
+    const archivo = req.files.file;
     const titulo = req.body.titulo || 'Sin Titulo';
     const estado = 'Completo';
     const fecha = new Date().toISOString();
 
-    if (titulo.length < 1 || titulo.length > 200) {
-      return res.status(400).json({ error: "El título debe tener entre 1 y 200 caracteres" });
-    }
+    validarArchivo(archivo);
 
-    const fileUrl = req.file.mimetype === 'application/pdf'
-      ? `/pdfs/${req.file.filename}`
-      : `/images/${req.file.filename}`;
+    const extension = path.extname(archivo.name).toLowerCase();
+    const nombreBase = path.basename(archivo.name, extension);
 
-    // Manejo Errores Para La DB
-    try {
-      const stmt = db.prepare(`
-        INSERT INTO documentos (titulo, filename, url, estado, fecha_subida)
-        VALUES (?, ?, ?, ?, ?)
-      `)
+    // ✅ Elimina caracteres no ASCII (como la ó codificada raro)
+    const nombreSanitizado = nombreBase
+      .normalize('NFD') // descompone acentos
+      .replace(/[\u0300-\u036f]/g, '') // elimina acentos
+      .replace(/[^a-zA-Z0-9_-]/g, '_') // todo lo que no sea letra, número, guión o _ lo convierte en _
 
-      const result = stmt.run(titulo, req.file.filename, fileUrl, estado, fecha);
-      console.log(`✅ Archivo subido exitosamente: ${req.file.filename}`);
+    const nombreUnico = `${Date.now()}_${nombreSanitizado}${extension}`;
+    const tipo = archivo.mimetype === 'application/pdf' ? 'pdfs' : 'images';
+    const ruta = `${tipo}/${nombreUnico}`;
 
-      res.status(200).json({
-        message: 'Archivo Subido Exitosamente',
-        id: result.lastInsertRowid,
-        url: fileUrl,
-        type: req.file.mimetype,
-        filename: req.file.filename,
-        titulo,
-        estado,
-        fecha,
-        size: req.file.size
+    console.log('🔐 Bucket:', process.env.SUPABASE_BUCKET);
+    console.log('📦 Subiendo archivo:', archivo.name, '->', ruta);
+
+    // Subir a Supabase
+    const { error: uploadError } = await supabase
+      .storage
+      .from(process.env.SUPABASE_BUCKET)
+      .upload(ruta, archivo.data, {
+        contentType: archivo.mimetype,
+        upsert: false,
       });
-    } catch (dbError) {
-      console.error('Error en base de datos:', dbError);
 
-      // Eliminar archivo si falla la inserción en BD
-      try {
-        await fs.unlink(req.file.path);
-      } catch (unlinkError) {
-        console.error('Error eliminando archivo temporal:', unlinkError);
-      }
+    if (uploadError) throw uploadError;
 
-      return res.status(500).json({ error: 'Error guardando en base de datos' });
-    }
-  } catch (error) {
-    console.log("Error uploading file: ", error);
-    res.status(500).json({ error: 'Error uploading file' });
-  }
-});
+    const { data: publicUrlData } = supabase
+      .storage
+      .from(process.env.SUPABASE_BUCKET)
+      .getPublicUrl(ruta);
 
-//Método para traer los archivos del uploads
-app.get('/files', async (req, res) => {
-  try {
-    const imagesDir = path.join(__dirname, 'uploads/images');
-    const pdfsDir = path.join(__dirname, 'uploads/pdfs');
+    const fileUrl = publicUrlData.publicUrl;
 
-    const [images, pdfs] = await Promise.all([
-      fs.readdir(imagesDir).catch(() => []),
-      fs.readdir(pdfsDir).catch(() => [])
-    ]);
+    // Guardar en base de datos
+    const insert =
+      archivo.mimetype === 'application/pdf'
+        ? db.prepare(`INSERT INTO documentos (titulo, filename, url, estado, fecha_subida) VALUES (?, ?, ?, ?, ?)`)
+        : db.prepare(`INSERT INTO imagenes (nombre, filename, url, fecha_subida) VALUES (?, ?, ?, ?)`);
 
-    const imageFiles = images.map(filename => ({
-      filename,
-      type: 'image',
-      url: `/images/${filename}`
-    }));
+    const result = archivo.mimetype === 'application/pdf'
+      ? insert.run(titulo, nombreUnico, fileUrl, estado, fecha)
+      : insert.run(titulo, nombreUnico, fileUrl, fecha);
 
-    const pdfFiles = pdfs.map(filename => ({
-      filename,
-      type: 'pdf',
-      url: `/pdfs/${filename}`
-    }));
-
-    res.json({
-      files: [...imageFiles, ...pdfFiles],
-      total: imageFiles.length + pdfFiles.length,
-      images: imageFiles.length,
-      pdfs: pdfFiles.length
+    res.status(200).json({
+      message: 'Archivo subido exitosamente',
+      id: result.lastInsertRowid,
+      tipo: archivo.mimetype,
+      titulo,
+      filename: nombreUnico,
+      url: fileUrl,
+      fecha,
+      size: archivo.size
     });
+
+
+
   } catch (error) {
-    res.status(500).json({ error: 'Error listando archivos' })
+    console.error('Error al subir a Supabase:', error.message);
+    res.status(500).json({ error: error.message || 'Error subiendo archivo' });
   }
 });
 
@@ -214,70 +137,30 @@ app.get('/documentos', (req, res) => {
 app.delete('/documentos/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const doc = db.prepare('SELECT * FROM documentos WHERE id = ?').get(id);
+    if (!doc) return res.status(404).json({ error: 'Documento no encontrado' });
 
-    // Buscar el documento primero
-    const documento = db.prepare('SELECT * FROM documentos WHERE id = ?').get(id);
+    const ruta = `pdfs/${doc.filename}`;
+    console.log('🗑️ Eliminando de Supabase:', ruta);
 
-    if (!documento) {
-      return res.status(404).json({ error: 'Documento no encontrado' });
+    const { error: removeError } = await supabase
+      .storage
+      .from(process.env.SUPABASE_BUCKET)
+      .remove([ruta]);
+
+    if (removeError) {
+      console.error('❌ Error eliminando de Supabase:', removeError.message);
+      return res.status(500).json({ error: 'No se pudo eliminar en Supabase' });
     }
 
-    // Eliminar archivo físico
-    const filePath = path.join(__dirname, 'uploads', documento.url);
-    try {
-      await fs.unlink(filePath);
-      console.log(`🗑️ Archivo eliminado: ${documento.filename}`);
-    } catch (fileError) {
-      console.warn('Archivo físico no encontrado, continuando con eliminación de BD');
-    }
+    db.prepare('DELETE FROM documentos WHERE id = ?').run(id);
 
-    // Eliminar de base de datos
-    const result = db.prepare('DELETE FROM documentos WHERE id = ?').run(id);
-
-    if (result.changes === 0) {
-      return res.status(404).json({ error: 'Documento no encontrado en BD' });
-    }
-
-    res.json({
-      message: 'Documento eliminado exitosamente',
-      deletedFile: documento.filename
-    });
-
+    res.json({ message: 'Documento eliminado', filename: doc.filename });
   } catch (error) {
-    console.error('Error eliminando documento:', error);
+    console.error('💥 Error general:', error.message);
     res.status(500).json({ error: 'Error eliminando documento' });
   }
 });
-
-//Método Post para subir la información de la imagen al db
-app.post('/upload-image', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No se recibió imagen' });
-
-    const nombre = req.body.nombre || 'Sin Nombre';
-    const fecha = new Date().toISOString();
-    const fileUrl = `/images/${req.file.filename}`;
-
-    const stmt = db.prepare(`
-      INSERT INTO imagenes (nombre, filename, url, fecha_subida)
-      VALUES (?, ?, ?, ?)
-    `)
-
-    const result = stmt.run(nombre, req.file.filename, fileUrl, fecha)
-
-    res.status(200).json({
-      message: 'Imagen Subida Correctamente',
-      id: result.lastInsertRowid,
-      nombre,
-      filename: req.file.filename,
-      url: fileUrl,
-      fecha
-    })
-  } catch (error) {
-    console.error('Error al subir la imagen: ', error.message);
-    res.status(500).json({ error: 'Error al subir la imagen' })
-  }
-})
 
 //Método Get para recuperar la información de la imágenes en la db
 app.get('/imagenes', async (req, res) => {
@@ -302,34 +185,16 @@ app.get('/imagenes', async (req, res) => {
 app.delete('/imagenes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const stmtSelect = db.prepare('SELECT * FROM imagenes WHERE id = ?');
-    const imagen = stmtSelect.get(id);
+    const img = db.prepare('SELECT * FROM imagenes WHERE id = ?').get(id);
+    if (!img) return res.status(404).json({ error: 'Imagen no encontrada' });
 
-    if (!imagen) {
-      return res.status(400).json({ error: 'Imagen no encontrada' });
-    };
+    const ruta = `images/${img.filename}`;
+    await supabase.storage.from(process.env.SUPABASE_BUCKET).remove([ruta]);
+    db.prepare('DELETE FROM imagenes WHERE id = ?').run(id);
 
-    const filePath = path.join(__dirname, 'uploads', 'images', imagen.filename);
-
-    try {
-      await fs.unlink(filePath);
-      console.log(`🧹 Imagen eliminada: ${imagen.filename}`)
-    } catch (error) {
-      console.warn('No se pudo borrar el archivo físico (quizás ya no existía)', error.message)
-    }
-
-    const stmtDelete = db.prepare('DELETE FROM imagenes WHERE id = ?');
-    const result = stmtDelete.run(id);
-
-    if (result.changes === 0) {
-      return res.status(500).json({ error: "Error eliminando imagen de la base de datos" });
-    }
-
-    res.json({ message: 'Imagen eliminada correctamente' });
-
+    res.json({ message: 'Imagen eliminada', filename: img.filename });
   } catch (error) {
-    console.error('Error eliminando imagen:', error.message)
-    res.status(500).json({ error: 'Error al eliminar imagen' })
+    res.status(500).json({ error: 'Error eliminando imagen' });
   }
 })
 
@@ -337,52 +202,15 @@ app.delete('/imagenes/:id', async (req, res) => {
 app.post('/login', express.json(), (req, res) => {
   const username = req.body.username?.trim();
   const password = req.body.password?.trim();
+  if (!username || !password) return res.status(400).json({ error: 'Faltan campos' });
 
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Faltan Campos' })
-  };
+  const user = db.prepare(`SELECT * FROM usuarios WHERE username = ? AND password = ?`).get(username, password);
+  if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-  const usuarios = db.prepare(`
-    SELECT * FROM usuarios WHERE username = ? AND password = ?
-  `).get(username, password)
-
-  if (!usuarios) {
-    return res.status(401).json({ error: 'Credenciales Invalidas' });
-  }
-
-  res.json({ message: 'Inicio De Sesión Exitoso' })
+  res.json({ message: 'Inicio de sesión exitoso' });
 })
 
-//Middleware de manejo de errores
-app.use((error, req, res, next) => {
-  console.error('🚨 Error middleware:', error.message);
-
-  if (error instanceof multer.MulterError) {
-    if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({
-        error: 'Archivo demasiado grande (máximo 10MB)'
-      });
-    }
-
-    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).json({
-        error: 'Campo de archivo inesperado'
-      });
-    }
-
-    if (error.code === 'LIMIT_FILE_COUNT') {
-      return res.status(400).json({
-        error: 'Demasiados archivos (máximo 1)'
-      });
-    }
-  }
-
-  res.status(500).json({
-    error: error.message || 'Error interno del servidor'
-  });
-});
-
-// Ruta de salud del servidor
+// Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -394,9 +222,4 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Backend corriendo en http://localhost:${PORT}`);
-  console.log(`📤 POST /upload - Subir archivos`);
-  console.log(`📋 GET /documentos - Listar documentos de BD`);
-  console.log(`📁 GET /files - Listar archivos del sistema`);
-  console.log(`🗑️ DELETE /documentos/:id - Eliminar documento`);
-  console.log(`💚 GET /health - Estado del servidor`);
 });

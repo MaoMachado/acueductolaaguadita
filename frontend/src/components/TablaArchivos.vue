@@ -132,7 +132,7 @@ function formatearFecha(fecha) {
 function esUrlValida(url) {
   if (!url) return false;
   try {
-    new URL(`${API}${url}`);
+    new URL(url);
     return true;
   } catch {
     return false;
@@ -212,7 +212,7 @@ defineExpose({
               <div class="flex justify-center gap-2">
                 <a v-if="esUrlValida(item.url)"
                   class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 text-sm"
-                  :href="`${API}${item.url}`" target="_blank" rel="noopener noreferrer">
+                  :href="item.url" target="_blank" rel="noopener noreferrer">
                   Descargar
                 </a>
                 <span v-else class="mr-3 p-1 text-gray-400">

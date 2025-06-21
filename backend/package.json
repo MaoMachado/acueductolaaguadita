@@ -13,10 +13,13 @@
   "license": "ISC",
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^11.10.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
     "express-rate-limit": "^7.5.0",
     "file-type": "^21.0.0",
     "jsonwebtoken": "^9.0.2",
