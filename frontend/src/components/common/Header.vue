@@ -7,7 +7,7 @@ import logo from '../../assets/images/logo.png'
     <div class="w-30 mx-auto mb-2">
       <img :src="logo" alt="Logo de la empresa Acueducto la Aguadita">
     </div>
-    <!-- <h1>Asociación Acueducto La Aguadita</h1> -->
+    <h1>Asociación Acueducto La Aguadita</h1>
   </header>
 </template>
 
