@@ -34,7 +34,7 @@ import imgMapa from '../assets/images/mapa_fresno.webp'
     <figure class="w-9/12 m-auto">
       <img class="w-full" :src="imgMapa" alt="Imagen Del Rio">
       <figcaption class="text-center text-xl font-light mt-2 p-1 shadow rounded-sm">
-        Ubicación de la fuente principal del agua que se distribuye a todos los usuario.
+        Ubicación de la fuente principal del agua que se distribuye a todos los usuarios.
       </figcaption>
     </figure>
   </section>
@@ -44,6 +44,16 @@ import imgMapa from '../assets/images/mapa_fresno.webp'
 header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
+  }
 
   &>h1 {
     color: var(--verde-oscuro);
@@ -55,15 +65,6 @@ header {
   }
 }
 
-header::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
-}
 
 .card {
   background: var(--crema);

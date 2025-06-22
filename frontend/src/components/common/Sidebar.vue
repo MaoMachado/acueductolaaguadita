@@ -2,6 +2,8 @@
   <aside>
     <nav class="flex flex-col">
       <RouterLink to="/" class="nav_item" :class="{ active: route.path === '/' }">Inicio</RouterLink>
+      <RouterLink to="/documentos" class="nav_item" :class="{ active: route.path === '/documentos' }">Documentos
+        Publicos</RouterLink>
       <RouterLink to="/galeria" class="nav_item" :class="{ active: route.path === '/galeria' }">Galería</RouterLink>
       <RouterLink to="/archivos" class="nav_item" :class="{ active: route.path === '/archivos' }">Archivos</RouterLink>
       <RouterLink to="/informeObra" class="nav_item" :class="{ active: route.path === '/informeObra' }">Informe De Obra
