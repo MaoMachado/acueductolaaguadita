@@ -17,15 +17,6 @@ function cerrarMenuMovil() {
 
 <template>
   <main class="flex h-full relative">
-    <!-- Botón menú móvil -->
-    <!-- <button @click="toggleMenuMovil" class="btn-menu-movil hidden lg:hidden fixed top-4 left-4 z-50"
-      :class="{ 'menu-abierto': menuMovilAbierto }">
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-    </button> -->
-
-    <!-- Overlay para móvil -->
     <div v-if="menuMovilAbierto" @click="cerrarMenuMovil" class="overlay-movil lg:hidden"></div>
 
     <!-- Submenu Lateral -->
@@ -150,12 +141,29 @@ function cerrarMenuMovil() {
 
     <!-- Contenido  -->
     <main class="flex-1 p-6">
-      <router-view />
+      <transition name="slide-view" mode="out-in">
+        <router-view />
+      </transition>
     </main>
   </main>
 </template>
 
 <style scoped>
+.slide-view-enter-active,
+.slide-view-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-view-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-view-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
 /* Layout principal */
 .flex {
   display: flex;

@@ -4,6 +4,7 @@ import Galeria from '../views/Galeria.vue';
 import DocumentosPublico from '../views/DocumentosPublico.vue';
 import Archivos from '../views/Archivos.vue';
 import InformeObra from '../views/InformeObra.vue';
+import Contactanos from '../views/Contactanos.vue';
 
 
 const routes = [
@@ -52,7 +53,8 @@ const routes = [
         component: () => import('../views/nosotros/SociosMiembros.vue')
       }
     ]
-  }
+  },
+  { path: '/contactanos', name: 'Contactanos', component: Contactanos }
 ]
 
 export const router = createRouter({

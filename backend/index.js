@@ -1,4 +1,5 @@
-import supabase from './supabaseClient.js'
+import supabase from './supabaseClient.js';
+import { enviarCorreo } from './emailService.js';
 import db from './db.js';
 
 import express from 'express';
@@ -7,7 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
 import fileUpload from 'express-fileupload';
-import sanitize from 'sanitize-filename';
+// import sanitize from 'sanitize-filename';
 
 
 //Soporte ESModules
@@ -208,6 +209,23 @@ app.post('/login', express.json(), (req, res) => {
   if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
   res.json({ message: 'Inicio de sesión exitoso' });
+})
+
+//Método para enviar el correo
+app.post('/contacto', async (req, res) => {
+  const { nombre, correo, asunto, mensaje } = req.body;
+
+  if (!nombre || !correo || !asunto || !mensaje) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
+
+  try {
+    const resultado = await enviarCorreo({ nombre, correo, asunto, mensaje });
+    res.status(200).json({ message: 'Correo enviando con éxito', resultado });
+
+  } catch (error) {
+    res.status(500).json({ error: 'Error al enviar el correos' })
+  }
 })
 
 // Health check

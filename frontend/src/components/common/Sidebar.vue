@@ -9,6 +9,8 @@
       <RouterLink to="/informeObra" class="nav_item" :class="{ active: route.path === '/informeObra' }">Informe De Obra
       </RouterLink>
       <RouterLink to="/nosotros" class="nav_item" :class="{ active: route.path === '/nosotros' }">Nosotros</RouterLink>
+      <RouterLink to="/contactanos" class="nav_item" :class="{ active: route.path === '/contactanos' }">Contactanos
+      </RouterLink>
     </nav>
   </aside>
 </template>

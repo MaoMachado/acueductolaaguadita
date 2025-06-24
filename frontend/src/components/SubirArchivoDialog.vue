@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
 
 <template>
   <section v-if="mostrar"
-    class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-xs backdrop-grayscale flex items-center justify-center z-50"
+    class="h-screen fixed inset-0 bg-black/50 backdrop-blur-xs backdrop-grayscale flex items-center justify-center z-50"
     @click="handleClickOutside">
     <div class="dialog p-6 rounded-xl shadow-md w-full max-w-md flex flex-col gap-4">
 
