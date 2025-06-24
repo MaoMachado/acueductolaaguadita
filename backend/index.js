@@ -1,6 +1,5 @@
 import supabase from './supabaseClient.js';
 import { enviarCorreo } from './emailService.js';
-import db from './db.js';
 
 import express from 'express';
 import cors from 'cors';
@@ -88,19 +87,43 @@ app.post('/upload', uploadLimit, async (req, res) => {
 
     const fileUrl = publicUrlData.publicUrl;
 
-    // Guardar en base de datos
-    const insert =
-      archivo.mimetype === 'application/pdf'
-        ? db.prepare(`INSERT INTO documentos (titulo, filename, url, estado, fecha_subida) VALUES (?, ?, ?, ?, ?)`)
-        : db.prepare(`INSERT INTO imagenes (nombre, filename, url, fecha_subida) VALUES (?, ?, ?, ?)`);
+    // Guardar en supabase
+    // Guardar en Supabase (tabla documentos o imagenes)
+    let insertResult;
+    if (archivo.mimetype === 'application/pdf') {
+      const { data, error } = await supabase
+        .from('documentos')
+        .insert([
+          {
+            titulo,
+            filename: nombreUnico,
+            url: fileUrl,
+            estado,
+            fecha_subida: fecha
+          }
+        ]);
 
-    const result = archivo.mimetype === 'application/pdf'
-      ? insert.run(titulo, nombreUnico, fileUrl, estado, fecha)
-      : insert.run(titulo, nombreUnico, fileUrl, fecha);
+      if (error) throw error;
+      insertResult = data;
+    } else {
+      const { data, error } = await supabase
+        .from('imagenes')
+        .insert([
+          {
+            nombre: titulo,
+            filename: nombreUnico,
+            url: fileUrl,
+            fecha_subida: fecha
+          }
+        ]);
+
+      if (error) throw error;
+      insertResult = data;
+    }
 
     res.status(200).json({
       message: 'Archivo subido exitosamente',
-      id: result.lastInsertRowid,
+      id: insertResult?.id,
       tipo: archivo.mimetype,
       titulo,
       filename: nombreUnico,
@@ -118,19 +141,20 @@ app.post('/upload', uploadLimit, async (req, res) => {
 });
 
 //Método para traer la información de los pdf en db
-app.get('/documentos', (req, res) => {
+app.get('/documentos', async (req, res) => {
   try {
-    const rows = db.prepare(`
-      SELECT id, titulo, filename, url, estado, fecha_subida
-      FROM documentos
-      ORDER BY fecha_subida DESC
-    `).all();
+    const { data, error } = await supabase
+      .from('documentos')
+      .select('id, titulo, filename, url, estado, fecha_subida')
+      .order('fecha_subida', { ascending: false });
 
-    console.log(`📋 Enviando ${rows.length} documentos`);
-    res.json(rows)
+    if (error) throw error;
+
+    console.log(`📋 Enviando ${data.length} documentos`);
+    res.json(data);
   } catch (e) {
-    console.error('Error obteniendo documentos:', e);
-    res.status(500).json({ error: 'Error obteniendo documentos de la base de datos' });
+    console.error('Error obteniendo documentos desde Supabase:', e.message);
+    res.status(500).json({ error: 'Error obteniendo documentos desde Supabase' });
   }
 });
 
@@ -138,12 +162,22 @@ app.get('/documentos', (req, res) => {
 app.delete('/documentos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const doc = db.prepare('SELECT * FROM documentos WHERE id = ?').get(id);
-    if (!doc) return res.status(404).json({ error: 'Documento no encontrado' });
 
-    const ruta = `pdfs/${doc.filename}`;
+    // Buscar documento en Supabase
+    const { data: docs, error: fetchError } = await supabase
+      .from('documentos')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !docs) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    const ruta = `pdfs/${docs.filename}`;
     console.log('🗑️ Eliminando de Supabase:', ruta);
 
+    // Eliminar archivo del bucket
     const { error: removeError } = await supabase
       .storage
       .from(process.env.SUPABASE_BUCKET)
@@ -154,9 +188,15 @@ app.delete('/documentos/:id', async (req, res) => {
       return res.status(500).json({ error: 'No se pudo eliminar en Supabase' });
     }
 
-    db.prepare('DELETE FROM documentos WHERE id = ?').run(id);
+    // Eliminar registro de la base de datos
+    const { error: deleteError } = await supabase
+      .from('documentos')
+      .delete()
+      .eq('id', id);
 
-    res.json({ message: 'Documento eliminado', filename: doc.filename });
+    if (deleteError) throw deleteError;
+
+    res.json({ message: 'Documento eliminado', filename: docs.filename });
   } catch (error) {
     console.error('💥 Error general:', error.message);
     res.status(500).json({ error: 'Error eliminando documento' });
@@ -166,19 +206,18 @@ app.delete('/documentos/:id', async (req, res) => {
 //Método Get para recuperar la información de la imágenes en la db
 app.get('/imagenes', async (req, res) => {
   try {
-    const stmt = db.prepare(`
-      SELECT id, nombre, filename, url, fecha_subida
-      FROM imagenes
-      ORDER BY fecha_subida DESC
-    `);
+    const { data, error } = await supabase
+      .from('imagenes')
+      .select('id, nombre, filename, url, fecha_subida')
+      .order('fecha_subida', { ascending: false });
 
-    const rows = stmt.all();
-    console.log(`📷 Enviadas ${rows.length} imágenes`)
-    res.json(rows);
+    if (error) throw error;
 
+    console.log(`📷 Enviadas ${data.length} imágenes`);
+    res.json(data);
   } catch (error) {
-    console.error('Error al listar las imagenes:', error.message);
-    res.status(500).json({ error: 'Error al listar las imagenes' })
+    console.error('Error al listar las imágenes:', error.message);
+    res.status(500).json({ error: 'Error al listar las imágenes' });
   }
 })
 
@@ -186,45 +225,67 @@ app.get('/imagenes', async (req, res) => {
 app.delete('/imagenes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const img = db.prepare('SELECT * FROM imagenes WHERE id = ?').get(id);
+
+    // 1. Obtener la imagen desde Supabase DB
+    const { data: img, error: getError } = await supabase
+      .from('imagenes')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (getError) throw getError;
     if (!img) return res.status(404).json({ error: 'Imagen no encontrada' });
 
+    // 2. Eliminar del bucket de Supabase
     const ruta = `images/${img.filename}`;
-    await supabase.storage.from(process.env.SUPABASE_BUCKET).remove([ruta]);
-    db.prepare('DELETE FROM imagenes WHERE id = ?').run(id);
+    const { error: removeError } = await supabase
+      .storage
+      .from(process.env.SUPABASE_BUCKET)
+      .remove([ruta]);
+
+    if (removeError) throw removeError;
+
+    // 3. Eliminar registro en la tabla
+    const { error: deleteError } = await supabase
+      .from('imagenes')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) throw deleteError;
 
     res.json({ message: 'Imagen eliminada', filename: img.filename });
   } catch (error) {
+    console.error('💥 Error eliminando imagen:', error.message);
     res.status(500).json({ error: 'Error eliminando imagen' });
   }
 })
 
 //Método para subir la información a la tabla usuarios
-app.post('/login', express.json(), (req, res) => {
+app.post('/login', express.json(), async (req, res) => {
   const username = req.body.username?.trim();
   const password = req.body.password?.trim();
-  if (!username || !password) return res.status(400).json({ error: 'Faltan campos' });
 
-  const user = db.prepare(`SELECT * FROM usuarios WHERE username = ? AND password = ?`).get(username, password);
-  if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
-
-  res.json({ message: 'Inicio de sesión exitoso' });
-})
-
-//Método para enviar el correo
-app.post('/contacto', async (req, res) => {
-  const { nombre, correo, asunto, mensaje } = req.body;
-
-  if (!nombre || !correo || !asunto || !mensaje) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Faltan campos' });
   }
 
   try {
-    const resultado = await enviarCorreo({ nombre, correo, asunto, mensaje });
-    res.status(200).json({ message: 'Correo enviando con éxito', resultado });
+    const { data: user, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
 
-  } catch (error) {
-    res.status(500).json({ error: 'Error al enviar el correos' })
+    if (error || !user) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    res.json({ message: 'Inicio de sesión exitoso' });
+
+  } catch (err) {
+    console.error('💥 Error login:', err.message);
+    res.status(500).json({ error: 'Error durante el login' });
   }
 })
 
