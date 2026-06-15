@@ -89,10 +89,10 @@ const enviarFomulario = async () => {
 </script>
 
 <template>
-  <main class="w-full h-screen content-center">
+  <main class="h-full content-center">
     <section class="flex flex-col gap-4">
 
-      <h1 class="text-center text-3xl font-bold">Contacto - Acueducto Acueducto La Aguadita</h1>
+      <h2 class="text-center text-4xl text-(--verde-oscuro)">Contacto - Acueducto Acueducto La Aguadita</h2>
       <form @submit.prevent="enviarFomulario" class="min-w-sm mx-auto shadow-sm p-4 rounded-xl flex flex-col gap-4">
         <div class="input_content">
           <input type="text" id="nombre" v-model="nombreInput">
@@ -126,12 +126,7 @@ const enviarFomulario = async () => {
 </template>
 
 <style scoped>
-h1 {
-  color: var(--verde-oscuro);
-}
-
 form {
-  background: var(--crema);
 
   & .input_content {
     display: flex;

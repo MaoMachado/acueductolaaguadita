@@ -16,12 +16,12 @@ function cerrarMenuMovil() {
 </script>
 
 <template>
-  <main class="flex h-full relative">
+  <main class="flex h-screen overflow-hidden relative bg-(--crema-40)">
     <div v-if="menuMovilAbierto" @click="cerrarMenuMovil" class="overlay-movil lg:hidden"></div>
 
     <!-- Submenu Lateral -->
     <aside class="sidebar" :class="{ 'sidebar-abierto': menuMovilAbierto }">
-      <div class="sidebar-header">
+      <header class="sidebar-header">
         <div class="sidebar-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2Z" stroke="currentColor" stroke-width="2"
@@ -29,7 +29,7 @@ function cerrarMenuMovil() {
           </svg>
         </div>
         <h2 class="sidebar-title">Nosotros</h2>
-      </div>
+      </header>
 
       <nav class="sidebar-nav">
         <RouterLink to="/nosotros" class="nav-link" @click="cerrarMenuMovil">
@@ -140,10 +140,12 @@ function cerrarMenuMovil() {
     </aside>
 
     <!-- Contenido  -->
-    <main class="flex-1 p-6">
-      <transition name="slide-view" mode="out-in">
-        <router-view />
-      </transition>
+    <main class="flex-1 h-screen overflow-auto">
+      <router-view v-slot="{ Component }">
+        <transition name="slide-view" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
   </main>
 </template>
@@ -162,19 +164,6 @@ function cerrarMenuMovil() {
 .slide-view-leave-to {
   opacity: 0;
   transform: translateY(-20px);
-}
-
-/* Layout principal */
-.flex {
-  display: flex;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.relative {
-  position: relative;
 }
 
 /* Botón menú móvil */
@@ -235,17 +224,10 @@ function cerrarMenuMovil() {
 
 /* Sidebar */
 .sidebar {
-  width: 300px;
-  background: linear-gradient(135deg, var(--crema) 30%, var(--verde-principal) 100%);
-  border-right: 1px solid rgba(148, 163, 184, 0.2);
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: scroll;
+  justify-content: space-between;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 /* Sidebar responsive */
@@ -272,7 +254,7 @@ function cerrarMenuMovil() {
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
-  backdrop-filter: blur(10px);
+  background: var(--gris-suave-80);
 }
 
 .sidebar-icon {
@@ -284,24 +266,20 @@ function cerrarMenuMovil() {
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .sidebar-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2em;
+  font-weight: 500;
   color: var(--verde-oscuro);
-  font-family: var(--fuente-titulo, 'Inter', sans-serif);
-  margin: 0;
 }
 
 /* Navegación */
 .sidebar-nav {
-  flex: 1;
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1.5rem;
 }
 
 .nav-link {
@@ -313,7 +291,6 @@ function cerrarMenuMovil() {
   color: var(--gris-claro);
   text-decoration: none;
   font-weight: 500;
-  font-family: var(--fuente-titulo);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -346,7 +323,6 @@ function cerrarMenuMovil() {
   background: var(--verde-claro);
   color: var(--blanco);
   font-weight: 400;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .nav-link.router-link-active::before {
@@ -371,14 +347,13 @@ function cerrarMenuMovil() {
 /* Footer del sidebar */
 .sidebar-footer {
   padding: 1.5rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--gris-suave-40);
 }
 
 .progress-indicator {
   width: 100%;
   height: 4px;
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--beige-oscuro-40);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 0.75rem;
@@ -402,66 +377,5 @@ function cerrarMenuMovil() {
   50% {
     width: 80%;
   }
-}
-
-.sidebar-footer-text {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin: 0;
-  text-align: center;
-  font-style: italic;
-}
-
-/* Contenido principal */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
-}
-
-.content-wrapper {
-  flex: 1;
-  padding: 2rem;
-  max-width: 100%;
-}
-
-@media (max-width: 1023px) {
-  .content-wrapper {
-    padding: 1rem;
-    margin-left: 0;
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-}
-
-/* Mejoras de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Scrollbar personalizado */
-.sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background: var(--sidebar-border);
-  border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
 }
 </style>

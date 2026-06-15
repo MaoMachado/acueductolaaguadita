@@ -11,10 +11,13 @@ import Footer from './components/common/Footer.vue';
       <Sidebar />
       <Footer />
     </article>
+
     <main class="w-screen relative overflow-hidden">
-      <transition name="slide-view" mode="out-in">
-        <router-view />
-      </transition>
+      <router-view v-slot="{ Component }">
+        <transition name="slide-view" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
   </section>
 </template>

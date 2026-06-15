@@ -3,13 +3,13 @@
     <nav class="flex flex-col">
       <RouterLink to="/" class="nav_item" :class="{ active: route.path === '/' }">Inicio</RouterLink>
       <RouterLink to="/documentos" class="nav_item" :class="{ active: route.path === '/documentos' }">Documentos
-        Publicos</RouterLink>
+        Públicos</RouterLink>
       <RouterLink to="/galeria" class="nav_item" :class="{ active: route.path === '/galeria' }">Galería</RouterLink>
       <RouterLink to="/archivos" class="nav_item" :class="{ active: route.path === '/archivos' }">Archivos</RouterLink>
       <RouterLink to="/informeObra" class="nav_item" :class="{ active: route.path === '/informeObra' }">Informe De Obra
       </RouterLink>
       <RouterLink to="/nosotros" class="nav_item" :class="{ active: route.path === '/nosotros' }">Nosotros</RouterLink>
-      <RouterLink to="/contactanos" class="nav_item" :class="{ active: route.path === '/contactanos' }">Contactanos
+      <RouterLink to="/contactanos" class="nav_item" :class="{ active: route.path === '/contactanos' }">Contáctenos
       </RouterLink>
     </nav>
   </aside>
