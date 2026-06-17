@@ -1,4 +1,4 @@
-<script setup>
+ <script setup>
 
 import { ref, onMounted } from 'vue';
 import SubirArchivoDialog from '../components/SubirArchivoDialog.vue';
