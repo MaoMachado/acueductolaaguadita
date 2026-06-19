@@ -1,21 +1,31 @@
-import supabase from './supabaseClient.js';
-import { enviarCorreo } from './emailService.js';
+import supabase from "./supabaseClient.js";
 
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import rateLimit from 'express-rate-limit';
-import fileUpload from 'express-fileupload';
+import bcrypt from "bcrypt";
+import express from "express";
+import cors from "cors";
+import path from "path";
+import rateLimit from "express-rate-limit";
+import fileUpload from "express-fileupload";
+import jwt from "jsonwebtoken";
+
+import auth from "./middleware/auth.js";
+import helmet from "helmet";
 // import sanitize from 'sanitize-filename';
 
+//Limite al login(sobre el endpoint existente)
+const loginLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 Minuto
+  max: 5, // 5 Intentos
+  message: { error: "Demasiados intentos, espera un minuto" },
+});
 
-//Soporte ESModules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const ORIGINS = process.env.CORS_ORIGINS?.split(",") || [
+  "http://localhost:5173",
+];
 
 const app = express();
-app.use(cors());
+app.use(helmet());
+app.use(cors({ origin: ORIGINS }));
 app.use(express.json());
 app.use(fileUpload());
 
@@ -23,32 +33,40 @@ app.use(fileUpload());
 const uploadLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { error: 'Demasiadas subidas, inténtalo mas tarde' },
+  message: { error: "Demasiadas subidas, inténtalo mas tarde" },
   standardHeaders: true,
   legacyHeaders: false,
-})
+});
 
 // Validaciones comunes
 const validarArchivo = (archivo) => {
   const extension = path.extname(archivo.name).toLowerCase();
-  const allowedExtension = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
-  const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+  const allowedExtension = [".jpg", ".jpeg", ".png", ".webp", ".pdf"];
+  const allowedMimes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "application/pdf",
+  ];
 
-  if (!allowedExtension.includes(extension)) throw new Error(`Extensión ${extension} no permitida`);
-  if (!allowedMimes.includes(archivo.mimetype)) throw new Error('Tipo MIME no permitido');
-  if (archivo.name.length > 100) throw new Error('Nombre de archivo demasiado largo');
+  if (!allowedExtension.includes(extension))
+    throw new Error(`Extensión ${extension} no permitida`);
+  if (!allowedMimes.includes(archivo.mimetype))
+    throw new Error("Tipo MIME no permitido");
+  if (archivo.name.length > 100)
+    throw new Error("Nombre de archivo demasiado largo");
 };
 
 //Método para subir IMG o PDF
-app.post('/upload', uploadLimit, async (req, res) => {
+app.post("/upload", auth, uploadLimit, async (req, res) => {
   try {
     if (!req.files || !req.files.file) {
-      return res.status(400).json({ error: 'No se recibió ningún archivo' });
+      return res.status(400).json({ error: "No se recibió ningún archivo" });
     }
 
     const archivo = req.files.file;
-    const titulo = req.body.titulo || 'Sin Titulo';
-    const estado = 'Completo';
+    const titulo = req.body.titulo || "Sin Titulo";
+    const estado = "Completo";
     const fecha = new Date().toISOString();
 
     validarArchivo(archivo);
@@ -58,20 +76,19 @@ app.post('/upload', uploadLimit, async (req, res) => {
 
     // ✅ Elimina caracteres no ASCII (como la ó codificada raro)
     const nombreSanitizado = nombreBase
-      .normalize('NFD') // descompone acentos
-      .replace(/[\u0300-\u036f]/g, '') // elimina acentos
-      .replace(/[^a-zA-Z0-9_-]/g, '_') // todo lo que no sea letra, número, guión o _ lo convierte en _
+      .normalize("NFD") // descompone acentos
+      .replace(/[\u0300-\u036f]/g, "") // elimina acentos
+      .replace(/[^a-zA-Z0-9_-]/g, "_"); // todo lo que no sea letra, número, guión o _ lo convierte en _
 
     const nombreUnico = `${Date.now()}_${nombreSanitizado}${extension}`;
-    const tipo = archivo.mimetype === 'application/pdf' ? 'pdfs' : 'images';
+    const tipo = archivo.mimetype === "application/pdf" ? "pdfs" : "images";
     const ruta = `${tipo}/${nombreUnico}`;
 
-    console.log('🔐 Bucket:', process.env.SUPABASE_BUCKET);
-    console.log('📦 Subiendo archivo:', archivo.name, '->', ruta);
+    console.log("🔐 Bucket:", process.env.SUPABASE_BUCKET);
+    console.log("📦 Subiendo archivo:", archivo.name, "->", ruta);
 
     // Subir a Supabase
-    const { error: uploadError } = await supabase
-      .storage
+    const { error: uploadError } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
       .upload(ruta, archivo.data, {
         contentType: archivo.mimetype,
@@ -80,8 +97,7 @@ app.post('/upload', uploadLimit, async (req, res) => {
 
     if (uploadError) throw uploadError;
 
-    const { data: publicUrlData } = supabase
-      .storage
+    const { data: publicUrlData } = supabase.storage
       .from(process.env.SUPABASE_BUCKET)
       .getPublicUrl(ruta);
 
@@ -90,156 +106,149 @@ app.post('/upload', uploadLimit, async (req, res) => {
     // Guardar en supabase
     // Guardar en Supabase (tabla documentos o imagenes)
     let insertResult;
-    if (archivo.mimetype === 'application/pdf') {
-      const { data, error } = await supabase
-        .from('documentos')
-        .insert([
-          {
-            titulo,
-            filename: nombreUnico,
-            url: fileUrl,
-            estado,
-            fecha_subida: fecha
-          }
-        ]);
+    if (archivo.mimetype === "application/pdf") {
+      const { data, error } = await supabase.from("documentos").insert([
+        {
+          titulo,
+          filename: nombreUnico,
+          url: fileUrl,
+          estado,
+          fecha_subida: fecha,
+        },
+      ]);
 
       if (error) throw error;
       insertResult = data;
     } else {
-      const { data, error } = await supabase
-        .from('imagenes')
-        .insert([
-          {
-            nombre: titulo,
-            filename: nombreUnico,
-            url: fileUrl,
-            fecha_subida: fecha
-          }
-        ]);
+      const { data, error } = await supabase.from("imagenes").insert([
+        {
+          nombre: titulo,
+          filename: nombreUnico,
+          url: fileUrl,
+          fecha_subida: fecha,
+        },
+      ]);
 
       if (error) throw error;
       insertResult = data;
     }
 
     res.status(200).json({
-      message: 'Archivo subido exitosamente',
+      message: "Archivo subido exitosamente",
       id: insertResult?.id,
       tipo: archivo.mimetype,
       titulo,
       filename: nombreUnico,
       url: fileUrl,
       fecha,
-      size: archivo.size
+      size: archivo.size,
     });
-
-
-
   } catch (error) {
-    console.error('Error al subir a Supabase:', error.message);
-    res.status(500).json({ error: error.message || 'Error subiendo archivo' });
+    console.error("Error al subir a Supabase:", error.message);
+    res.status(500).json({ error: error.message || "Error subiendo archivo" });
   }
 });
 
 //Método para traer la información de los pdf en db
-app.get('/documentos', async (req, res) => {
+app.get("/documentos", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from('documentos')
-      .select('id, titulo, filename, url, estado, fecha_subida')
-      .order('fecha_subida', { ascending: false });
+      .from("documentos")
+      .select("id, titulo, filename, url, estado, fecha_subida")
+      .order("fecha_subida", { ascending: false });
 
     if (error) throw error;
 
     console.log(`📋 Enviando ${data.length} documentos`);
     res.json(data);
   } catch (e) {
-    console.error('Error obteniendo documentos desde Supabase:', e.message);
-    res.status(500).json({ error: 'Error obteniendo documentos desde Supabase' });
+    console.error("Error obteniendo documentos desde Supabase:", e.message);
+    res
+      .status(500)
+      .json({ error: "Error obteniendo documentos desde Supabase" });
   }
 });
 
 //Ruta de eliminar documentos
-app.delete('/documentos/:id', async (req, res) => {
+app.delete("/documentos/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
 
     // Buscar documento en Supabase
     const { data: docs, error: fetchError } = await supabase
-      .from('documentos')
-      .select('*')
-      .eq('id', id)
+      .from("documentos")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (fetchError || !docs) {
-      return res.status(404).json({ error: 'Documento no encontrado' });
+      return res.status(404).json({ error: "Documento no encontrado" });
     }
 
     const ruta = `pdfs/${docs.filename}`;
-    console.log('🗑️ Eliminando de Supabase:', ruta);
+    console.log("🗑️ Eliminando de Supabase:", ruta);
 
     // Eliminar archivo del bucket
-    const { error: removeError } = await supabase
-      .storage
+    const { error: removeError } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
       .remove([ruta]);
 
     if (removeError) {
-      console.error('❌ Error eliminando de Supabase:', removeError.message);
-      return res.status(500).json({ error: 'No se pudo eliminar en Supabase' });
+      console.error("❌ Error eliminando de Supabase:", removeError.message);
+      return res.status(500).json({ error: "No se pudo eliminar en Supabase" });
     }
 
     // Eliminar registro de la base de datos
     const { error: deleteError } = await supabase
-      .from('documentos')
+      .from("documentos")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     if (deleteError) throw deleteError;
 
-    res.json({ message: 'Documento eliminado', filename: docs.filename });
+    res.json({ message: "Documento eliminado", filename: docs.filename });
   } catch (error) {
-    console.error('💥 Error general:', error.message);
-    res.status(500).json({ error: 'Error eliminando documento' });
+    console.error("💥 Error general:", error.message);
+    res.status(500).json({ error: "Error eliminando documento" });
   }
 });
 
 //Método Get para recuperar la información de la imágenes en la db
-app.get('/imagenes', async (req, res) => {
+app.get("/imagenes", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from('imagenes')
-      .select('id, nombre, filename, url, fecha_subida')
-      .order('fecha_subida', { ascending: false });
+      .from("imagenes")
+      .select("id, nombre, filename, url, fecha_subida")
+      .order("fecha_subida", { ascending: false });
 
     if (error) throw error;
 
     console.log(`📷 Enviadas ${data.length} imágenes`);
     res.json(data);
   } catch (error) {
-    console.error('Error al listar las imágenes:', error.message);
-    res.status(500).json({ error: 'Error al listar las imágenes' });
+    console.error("Error al listar las imágenes:", error.message);
+    res.status(500).json({ error: "Error al listar las imágenes" });
   }
-})
+});
 
 //Método Delete para eliminar la imagen
-app.delete('/imagenes/:id', async (req, res) => {
+app.delete("/imagenes/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
 
     // 1. Obtener la imagen desde Supabase DB
     const { data: img, error: getError } = await supabase
-      .from('imagenes')
-      .select('*')
-      .eq('id', id)
+      .from("imagenes")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (getError) throw getError;
-    if (!img) return res.status(404).json({ error: 'Imagen no encontrada' });
+    if (!img) return res.status(404).json({ error: "Imagen no encontrada" });
 
     // 2. Eliminar del bucket de Supabase
     const ruta = `images/${img.filename}`;
-    const { error: removeError } = await supabase
-      .storage
+    const { error: removeError } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
       .remove([ruta]);
 
@@ -247,54 +256,70 @@ app.delete('/imagenes/:id', async (req, res) => {
 
     // 3. Eliminar registro en la tabla
     const { error: deleteError } = await supabase
-      .from('imagenes')
+      .from("imagenes")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     if (deleteError) throw deleteError;
 
-    res.json({ message: 'Imagen eliminada', filename: img.filename });
+    res.json({ message: "Imagen eliminada", filename: img.filename });
   } catch (error) {
-    console.error('💥 Error eliminando imagen:', error.message);
-    res.status(500).json({ error: 'Error eliminando imagen' });
+    console.error("💥 Error eliminando imagen:", error.message);
+    res.status(500).json({ error: "Error eliminando imagen" });
   }
-})
+});
 
 //Método para subir la información a la tabla usuarios
-app.post('/login', express.json(), async (req, res) => {
+app.post("/login", loginLimiter, async (req, res) => {
   const username = req.body.username?.trim();
   const password = req.body.password?.trim();
 
+  console.log("1️⃣ Llegó la petición:", { username, password });
+
   if (!username || !password) {
-    return res.status(400).json({ error: 'Faltan campos' });
+    return res.status(400).json({ error: "Los campos son necesarios." });
   }
 
   try {
-    const { data: user, error } = await supabase
-      .from('usuarios')
-      .select('*')
-      .eq('username', username)
-      .eq('password', password)
+    const { data: users, error: queryError } = await supabase
+      .from("usuarios")
+      .select("*")
+      .eq("username", username)
       .single();
 
-    if (error || !user) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
-    }
+    console.log("2️⃣ Usuario encontrado en BD:", users);
+    console.log("2️⃣ Error Supabase:", queryError);
 
-    res.json({ message: 'Inicio de sesión exitoso' });
+    if (!users)
+      return res.status(401).json({ error: "Credenciales inválidas" });
 
+    const valida = await bcrypt.compare(password, users.password);
+
+    console.log("3️⃣ Resultado bcrypt.compare:", valida);
+
+    if (!valida)
+      return res.status(401).json({ error: "Credenciales inválidas" });
+
+    const token = jwt.sign(
+      { id: users.id, username: users.username },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "8h" },
+    );
+
+    console.log("4️⃣ Token generado correctamente");
+    res.json({ token, message: "Inicio de sesión exitoso" });
   } catch (err) {
-    console.error('💥 Error login:', err.message);
-    res.status(500).json({ error: 'Error durante el login' });
+    console.error("💥 Error login:", err.message);
+    res.status(500).json({ error: "Error durante el login" });
   }
-})
+});
 
 // Health check
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.json({
-    status: 'OK',
+    status: "OK",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 
