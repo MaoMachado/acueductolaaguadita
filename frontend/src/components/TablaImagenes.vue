@@ -68,6 +68,7 @@ async function eliminar(id) {
     const res = await fetch(`${API}/imagenes/${id}`, {
       method: 'DELETE',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
@@ -156,8 +157,8 @@ defineExpose({
 </script>
 
 <template>
-  <section class="mt-20">
-    <h2 class="text-2xl font-semibold mb-4 text-center">Imagenes Subidas</h2>
+  <section>
+    <h2 class="text-3xl font-semibold mb-4 text-center">Imagenes Subidas</h2>
 
     <!-- Mostrar mensaje de error -->
     <div v-if="error" class="error-message p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4">
@@ -171,8 +172,8 @@ defineExpose({
     </div>
 
     <!-- Mensaje cuando no hay imágenes -->
-    <div v-else-if="!error && imagenes.length === 0" class="text-center p-8 bg-gray-50 rounded">
-      <p class="text-gray-600">No hay imágenes cargadas</p>
+    <div v-else-if="!error && imagenes.length === 0" class="text-center py-6 bg-(--crema) rounded-xl">
+      <p class="text-lg font-semibold text-(--marron-suave)">No hay imágenes cargadas</p>
     </div>
 
     <div v-else-if="!error" class="table-container">
@@ -191,7 +192,7 @@ defineExpose({
             class="hover:bg-gray-50 border-b border-gray-200 transition-colors duration-200">
             <td class="p-3" :title="img.nombre">
               <div>
-                {{ img.nombre || 'Sin nombre' }}
+                {{ img.nombre || "Sin nombre" }}
               </div>
             </td>
 
@@ -237,7 +238,7 @@ defineExpose({
     <div v-if="imagenModalAbierta" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
       @click="cerrarModal">
       <div class="max-w-4xl max-h-4xl p-4">
-        <img :src="imagenModalSrc" :alt="imagenModalAlt" class="max-w-full max-h-full object-contain rounded-lg">
+        <img :src="imagenModalSrc" :alt="imagenModalAlt" class="max-w-full max-h-full object-contain rounded-lg" />
         <button @click="cerrarModal" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300">
           ✕
         </button>
@@ -249,8 +250,8 @@ defineExpose({
 <script>
 // Variables para el modal de imagen
 const imagenModalAbierta = ref(false);
-const imagenModalSrc = ref('');
-const imagenModalAlt = ref('');
+const imagenModalSrc = ref("");
+const imagenModalAlt = ref("");
 
 function abrirImagenCompleta(src, alt) {
   imagenModalSrc.value = src;
@@ -260,8 +261,8 @@ function abrirImagenCompleta(src, alt) {
 
 function cerrarModal() {
   imagenModalAbierta.value = false;
-  imagenModalSrc.value = '';
-  imagenModalAlt.value = '';
+  imagenModalSrc.value = "";
+  imagenModalAlt.value = "";
 }
 </script>
 

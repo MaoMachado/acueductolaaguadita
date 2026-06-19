@@ -24,17 +24,25 @@ const data = {
 
 <template>
   <main class="grid place-content-center container h-full px-6">
-    <div class="bg-(--gris-suave-40) p-2 rounded-lg">
-      <h2 class="mb-4 text-2xl text-center">{{ data.title }}</h2>
-      <ul v-for="item in data.items" :key="item.title" class="ml-4 text-base list-disc">
-        <li><strong>{{ item.title }}</strong> {{ item.text }}</li>
-      </ul>
-    </div>
+    <section class="bg-(--gris-suave-40) rounded-lg flex flex-col gap-6">
+      <header>
+        <h2 class="text-2xl text-center">{{ data.title }}</h2>
+      </header>
+      <article class="px-6">
+        <ul v-for="item in data.items" :key="item.title" class="ml-4 text-base list-disc">
+          <li><strong>{{ item.title }}</strong> {{ item.text }}</li>
+        </ul>
+      </article>
+    </section>
   </main>
 </template>
 
 <style scoped>
-li {
-  margin-block-end: 0.5rem;
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
 }
 </style>

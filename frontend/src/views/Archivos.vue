@@ -1,13 +1,13 @@
- <script setup>
-
-import { ref, onMounted } from 'vue';
-import SubirArchivoDialog from '../components/SubirArchivoDialog.vue';
-import TablaArchivos from '../components/TablaArchivos.vue';
-import SubirImagenDialog from '../components/SubirImagenDialog.vue';
-import TablaImagenes from '../components/TablaImagenes.vue';
-import Login from '../components/Login.vue';
+<script setup>
+import { ref, onMounted } from "vue";
+import SubirArchivoDialog from "../components/SubirArchivoDialog.vue";
+import TablaArchivos from "../components/TablaArchivos.vue";
+import SubirImagenDialog from "../components/SubirImagenDialog.vue";
+import TablaImagenes from "../components/TablaImagenes.vue";
+import Login from "../components/Login.vue";
 
 const cargando = ref(false);
+const token = ref(localStorage.getItem("token"));
 
 // Dialog Subir Archivos
 const mostrarDialogArchivo = ref(false);
@@ -19,25 +19,19 @@ function cargarTabla() {
 //Dialog Subir Imagenes
 const mostrarDialogImagen = ref(false);
 const recargarTablaImagenes = ref(false);
+
 function actualizarTabla() {
   recargarTablaImagenes.value = !recargarTablaImagenes.value;
 }
 
-//Código Manejo del login
-const logueado = ref(false);
-onMounted(() => {
-  logueado.value = localStorage.getItem('logueado') === 'true';
-})
-
 function manejarLogin() {
-  logueado.value = true;
-  localStorage.setItem('logueado', 'true');
+  token.value = localStorage.getItem("token");
 }
 
 // Función para manejar el logout (opcional pero recomendada)
 function manejarLogout() {
-  logueado.value = false;
-  localStorage.removeItem('logueado');
+  token.value = null;
+  localStorage.removeItem("token");
 }
 
 // Corregidas las funciones de callback para los eventos
@@ -54,77 +48,53 @@ function manejarImagenSubida() {
 
 <template>
   <main class="h-full grid place-content-center">
-    <Login v-if="!logueado" @login-exitoso="manejarLogin" />
+    <Login v-if="!token" @login-exitoso="manejarLogin" />
 
-    <section v-else class="space-y-8 p-6">
-      <header class="text-center space-y-2">
-        <h1 class="text-4xl font-bold ">Gestión De Archivos</h1>
-        <p class="text-lg mb-8">
-          Consulta y administra los documentos oficiales de la Asociación Acueducto La Aguadita de forma segura y
-          organizada.
-        </p>
-      </header>
+    <section v-else class="py-6 px-3">
+      <div class="flex flex-col gap-8">
+        <header class="flex items-center gap-3">
+          <h1 class="text-3xl font-semibold text-(--verde-oscuro) text-center bg-(--gris-suave) rounded-xl p-2">
+            Gestión De Archivos
+          </h1>
+          <p class="text-lg text-(--marron-suave) text-center font-semibold w-xl">
+            Consulta y administra los documentos oficiales de la Asociación
+            Acueducto La Aguadita de forma segura y organizada.
+          </p>
+        </header>
 
-      <div class="flex gap-4 ml-4 btn_grupo">
-        <button @click="mostrarDialogArchivo = true" :disabled="cargando">
-          Subir PDF
-        </button>
+        <div class="flex gap-4 justify-center btn_grupo">
+          <button @click="mostrarDialogArchivo = true" :disabled="cargando">
+            Subir PDF
+          </button>
 
-        <button @click="mostrarDialogImagen = true" :disabled="cargando">
-          Subir IMG
-        </button>
+          <button @click="mostrarDialogImagen = true" :disabled="cargando">
+            Subir IMG
+          </button>
 
-        <!-- Botón de logout opcional -->
-        <button @click="manejarLogout" class="btn-logout">
-          Cerrar Sesión
-        </button>
+          <!-- Botón de logout opcional -->
+          <button @click="manejarLogout">Cerrar Sesión</button>
+        </div>
 
+        <SubirArchivoDialog :token="token" :mostrar="mostrarDialogArchivo" @cerrar="mostrarDialogArchivo = false"
+          @archivo-subido="recargarTablaArchivos" />
+
+        <SubirImagenDialog :token="token" :mostrar="mostrarDialogImagen" @cerrar="mostrarDialogImagen = false"
+          @imagen-subida="recargarTablaImagenes" />
+
+        <!-- Tablas -->
+        <TablaArchivos :recargar="recargarTablaArchivos" :token="token" />
+        <TablaImagenes :recargar="recargarTablaImagenes" :token="token" />
       </div>
-
-      <SubirArchivoDialog :mostrar="mostrarDialogArchivo" @cerrar="mostrarDialogArchivo = false"
-        @archivo-subido="recargarTablaArchivos" />
-
-      <SubirImagenDialog :mostrar="mostrarDialogImagen" @cerrar="mostrarDialogImagen = false"
-        @imagen-subida="recargarTablaImagenes" />
-
-      <!-- Tablas -->
-      <TablaArchivos :recargar="recargarTablaArchivos" />
-      <TablaImagenes :recargar="recargarTablaImagenes" />
-
     </section>
   </main>
 </template>
 
 <style scoped>
-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-header::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
-}
-
-header>h1 {
-  color: var(--verde-oscuro);
-}
-
-header>p {
-  color: var(--marron-suave);
-  font-weight: 400;
-}
-
 .btn_grupo>button {
   padding: 0.4rem;
   border-radius: 0.5rem;
-  background: var(--verde-claro);
-  color: var(--blanco);
+  background: var(--gris-suave);
+  color: var(--verde-principal);
   font-weight: 600;
   font-family: var(--fuente-titulo);
   cursor: pointer;
@@ -134,12 +104,10 @@ header>p {
 }
 
 .btn_grupo>button:hover {
-  background: var(--verde-oscuro);
+  background: var(--verde-principal);
+  color: var(--blanco);
   outline: 1px solid var(--marron-suave);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.btn_grupo>button:active {
   transform: translateY(-2px);
 }
 
@@ -154,14 +122,5 @@ header>p {
   outline: none;
   box-shadow: none;
   transform: none;
-}
-
-/* Estilo específico para el botón de logout */
-.btn-logout {
-  background: var(--marron-suave) !important;
-}
-
-.btn-logout:hover {
-  background: #8B4513 !important;
 }
 </style>

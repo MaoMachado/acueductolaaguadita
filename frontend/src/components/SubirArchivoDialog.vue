@@ -1,41 +1,50 @@
 <script setup>
-
-import { ref, watch, defineProps, defineEmits, onMounted, onBeforeUnmount, computed } from 'vue';
+import {
+  ref,
+  watch,
+  defineProps,
+  defineEmits,
+  onMounted,
+  onBeforeUnmount,
+  computed,
+} from "vue";
 
 const API = import.meta.env.VITE_API_URL;
 
-const nuevoTitulo = ref('');
+const nuevoTitulo = ref("");
 const archivo = ref(null);
 const cargando = ref(false);
-const error = ref('');
+const error = ref("");
 
 const props = defineProps({
-  mostrar: Boolean
+  mostrar: Boolean,
 });
 
-const emit = defineEmits(['cerrar', 'archivo-subido']);
+const emit = defineEmits(["cerrar", "archivo-subido"]);
 
 //Para validar si el formulario esta completo
 const formularioValido = computed(() => {
-  return archivo.value && nuevoTitulo.value.trim().length > 0 && !cargando.value;
+  return (
+    archivo.value && nuevoTitulo.value.trim().length > 0 && !cargando.value
+  );
 });
 
 //Para obtener información del archivo
 const infoArchivo = computed(() => {
-  if (!archivo.value) return null
+  if (!archivo.value) return null;
 
   const tamaño = (archivo.value.size / 1024 / 1024).toFixed(2);
   return {
     nombre: archivo.value.name,
     tamaño: `${tamaño} MB`,
-    tipo: archivo.value.type
-  }
-})
+    tipo: archivo.value.type,
+  };
+});
 
 function seleccionarArchivo(e) {
   const file = e.target.files[0];
   archivo.value = file;
-  error.value = '';
+  error.value = "";
 
   if (!file) {
     archivo.value = null;
@@ -43,73 +52,75 @@ function seleccionarArchivo(e) {
   }
 
   //Validar tipo de archivo
-  if (file.type !== 'application/pdf') {
-    error.value = 'Solo se permiten archivos PDF';
+  if (file.type !== "application/pdf") {
+    error.value = "Solo se permiten archivos PDF";
     archivo.value = null;
     return;
   }
 
   //Validar por tamaño
-  const maxSizeMB = 10 * 1024 * 1024
+  const maxSizeMB = 10 * 1024 * 1024;
   if (file.size > maxSizeMB) {
-    erro.value = 'El archivo es demasiado grande. Maximo 10 MB';
+    error.value = "El archivo es demasiado grande. Maximo 10 MB";
     archivo.value = null;
     return;
   }
 
   archivo.value = file;
-};
+}
 
 //Cargar los archivos al backend
 async function subirPDF() {
-
   if (!formularioValido.value) {
-    error.value = 'Por favor completar todos los campos';
+    error.value = "Por favor completar todos los campos";
     return;
   }
 
   const formData = new FormData();
-  formData.append('file', archivo.value);
-  formData.append('titulo', nuevoTitulo.value.trim());
+  formData.append("file", archivo.value);
+  formData.append("titulo", nuevoTitulo.value.trim());
 
   try {
     cargando.value = true;
-    error.value = '';
+    error.value = "";
 
-    console.log('🎯 Archivo enviado:', archivo.value);
-    console.log('🎯 Título:', nuevoTitulo.value);
+    console.log("🎯 Archivo enviado:", archivo.value);
+    console.log("🎯 Título:", nuevoTitulo.value);
 
     const response = await fetch(`${API}/upload`, {
-      method: 'POST',
-      body: formData
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+      throw new Error(
+        errorData.error || `Error del servidor: ${response.status}`,
+      );
     }
 
     const data = await response.json();
-    alert('Archivo subido exitosamente: ', data);
-    emit('archivo-subido', data);
+    alert("Archivo subido exitosamente: ", data);
+    emit("archivo-subido", data);
     limpiarFormulario();
     cancelar();
-
   } catch (error) {
-    console.error('Error al subir el PDF: ', error);
-    alert('Hubo un problema al subir el archivo');
-    error.value = error.message || 'Hubo un problema al subir el archivo';
-
+    console.error("Error al subir el PDF: ", error);
+    alert("Hubo un problema al subir el archivo");
+    error.value = error.message || "Hubo un problema al subir el archivo";
   } finally {
     cargando.value = false;
   }
-};
+}
 
 const limpiarFormulario = () => {
-  nuevoTitulo.value = '';
+  nuevoTitulo.value = "";
   archivo.value = null;
-  error.value = '';
-}
+  error.value = "";
+};
 
 //Salir de la ventana Modal
 const cancelar = () => {
@@ -118,61 +129,83 @@ const cancelar = () => {
   }
 
   limpiarFormulario();
-  emit('cerrar');
-}
+  emit("cerrar");
+};
 
 function handleClickOutside(e) {
-  if (e.target.classList.contains('modal-overlay') && !cargando.value) {
+  if (e.target.classList.contains("modal-overlay") && !cargando.value) {
     cancelar();
   }
 }
 
 function handleKeyDown(e) {
-  if (e.key === 'Escape' && !cargando.value) {
+  if (e.key === "Escape" && !cargando.value) {
     cancelar();
   }
 }
 
 watch(nuevoTitulo, () => {
-  if (error.value) error.value = '';
+  if (error.value) error.value = "";
 });
 
 watch(archivo, () => {
-  if (error.value && archivo.value) error.value = '';
+  if (error.value && archivo.value) error.value = "";
 });
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown);
-})
+  document.addEventListener("keydown", handleKeyDown);
+});
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleKeyDown);
-})
-
+  document.removeEventListener("keydown", handleKeyDown);
+});
 </script>
 
 <template>
-  <section v-if="mostrar"
+  <section
+    v-if="mostrar"
     class="h-screen fixed inset-0 bg-black/50 backdrop-blur-xs backdrop-grayscale flex items-center justify-center z-50"
-    @click="handleClickOutside">
-    <div class="dialog p-6 rounded-xl shadow-md w-full max-w-md flex flex-col gap-4">
-
-      <h2 class="text-2xl font-bold text-gray-800 text-center">Crear Enlace Con Documento</h2>
+    @click="handleClickOutside"
+  >
+    <div
+      class="dialog p-6 rounded-xl shadow-md w-full max-w-md flex flex-col gap-4"
+    >
+      <h2 class="text-2xl font-bold text-gray-800 text-center">
+        Crear Enlace Con Documento
+      </h2>
 
       <!-- Campo Titulo -->
       <div class="campo-grupo">
-        <label for="titulo" class="block text-sm font-medium text-gray-700">Título del documento:</label>
-        <input id="titulo" v-model="nuevoTitulo" type="text" placeholder="Ingresa el título del archivo"
-          class="w-full p-3 rounded-xl titulo_archivo" :disabled="cargando" maxlength="100" />
-        <small class="text-gray-500 text-center">{{ nuevoTitulo.length }}/100 caracteres</small>
+        <label for="titulo" class="block text-sm font-medium text-gray-700"
+          >Título del documento:</label
+        >
+        <input
+          id="titulo"
+          v-model="nuevoTitulo"
+          type="text"
+          placeholder="Ingresa el título del archivo"
+          class="w-full p-3 rounded-xl titulo_archivo"
+          :disabled="cargando"
+          maxlength="100"
+        />
+        <small class="text-gray-500 text-center"
+          >{{ nuevoTitulo.length }}/100 caracteres</small
+        >
       </div>
 
       <!-- Selector del archivo -->
       <div class="campo-grupo">
-        <label for="archivo" class="block text-sm font-medium text-gray-700">Seleccionar archivo PDF:</label>
+        <label for="archivo" class="block text-sm font-medium text-gray-700"
+          >Seleccionar archivo PDF:</label
+        >
         <div class="inp_archivo">
-          <input id="archivo" type="file" @change="seleccionarArchivo" accept=".pdf,application/pdf"
-            :disabled="cargando" />
+          <input
+            id="archivo"
+            type="file"
+            @change="seleccionarArchivo"
+            accept=".pdf,application/pdf"
+            :disabled="cargando"
+          />
         </div>
       </div>
 
@@ -188,20 +221,39 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- Mostrar errores -->
-      <div v-if="error" class="error-message p-3 bg-red-50 border border-red-200 rounded-lg">
+      <div
+        v-if="error"
+        class="error-message p-3 bg-red-50 border border-red-200 rounded-lg"
+      >
         <p class="text-sm text-red-600">{{ error }}</p>
       </div>
 
       <!-- Botones de acción -->
       <div class="flex justify-end gap-3 btn_grupo">
-        <button @click="cancelar" class="px-4 py-2 rounded-lg btn-cancelar">Cancelar</button>
-        <button @click="subirPDF" :disabled="!formularioValido"
-          class="px-4 py-2 rounded-lg btn-subir disabled:opacity-50 disabled:cursor-not-allowed">
+        <button @click="cancelar" class="px-4 py-2 rounded-lg btn-cancelar">
+          Cancelar
+        </button>
+        <button
+          @click="subirPDF"
+          :disabled="!formularioValido"
+          class="px-4 py-2 rounded-lg btn-subir disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <span v-if="cargando" class="flex items-center gap-2">
             <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
-              <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+                fill="none"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
             </svg>
             Subiendo...
           </span>
@@ -234,7 +286,9 @@ onBeforeUnmount(() => {
 .titulo_archivo {
   font-family: var(--fuente-parrafo, sans-serif);
   border: 2px solid var(--verde-principal, #4a9d7a);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .titulo_archivo:focus {
@@ -284,7 +338,6 @@ onBeforeUnmount(() => {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);

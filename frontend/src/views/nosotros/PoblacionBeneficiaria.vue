@@ -1,6 +1,6 @@
 <template>
   <main class="container h-full grid place-content-center p-4">
-    <div>
+    <section class="px-5">
       <p class="text-justify lg:text-xl mb-4">
         La Corporación Autónoma Regional de Tolima, CORTOLIMA otorgo a LA ASOCIACION USUARIOS ACUEDUCTO LA AGUADITA,
         concesión de aguas
@@ -13,6 +13,6 @@
         de cinco (5)
         habitantes por vivienda, estimándose una población de <strong>setecientos treinta (730) habitantes.</strong>
       </p>
-    </div>
+    </section>
   </main>
 </template>

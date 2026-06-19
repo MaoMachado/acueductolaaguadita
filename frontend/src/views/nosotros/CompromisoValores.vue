@@ -26,20 +26,24 @@ const data = {
 <template>
   <main class="grid place-content-center container h-full p-4">
     <div class="flex flex-col gap-8">
-      <article>
-        <h2 class="text-2xl text-center font-semibold mb-2">{{ data.compromiso.title }}</h2>
-        <h3 class="mb-2 text-lg ml-4">{{ data.compromiso.subtitle }}</h3>
-        <ol class="list-none border-2 border-(--beige-oscuro-20) rounded-xl p-2 w-fit">
-          <li v-for="item in data.compromiso.items" :key="item">
+      <article class="flex flex-col gap-3">
+        <header class="px-10">
+          <h2 class="text-2xl text-center font-semibold">{{ data.compromiso.title }}</h2>
+          <h3 class="text-lg">{{ data.compromiso.subtitle }}</h3>
+        </header>
+        <ol class="list-none text-center">
+          <li v-for="item in data.compromiso.items" :key="item" class="text-xl">
             <p>{{ item }}</p>
           </li>
         </ol>
       </article>
 
-      <article>
-        <h2 class="text-2xl text-center font-semibold mb-2">{{ data.valores.title }}</h2>
-        <ol class="list-none border-2 border-(--beige-oscuro-20) rounded-xl p-2 w-fit">
-          <li v-for="item in data.valores.items" :key="item">
+      <article class="flex flex-col gap-3">
+        <header>
+          <h2 class="text-2xl text-center font-semibold mb-2">{{ data.valores.title }}</h2>
+        </header>
+        <ol class="list-none">
+          <li v-for="item in data.valores.items" :key="item" class="text-xl px-5">
             <p>
               <strong>{{ data.valores.subtitle }}: </strong>
               {{ item }}
@@ -50,3 +54,13 @@ const data = {
     </div>
   </main>
 </template>
+
+<style scoped>
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
+}
+</style>

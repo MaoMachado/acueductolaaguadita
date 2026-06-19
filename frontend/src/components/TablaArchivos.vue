@@ -67,6 +67,7 @@ async function eliminar(id) {
     const response = await fetch(`${API}/documentos/${id}`, {
       method: 'DELETE',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
@@ -155,80 +156,79 @@ defineExpose({
   cargando: cargando.value,
   error: error.value
 });
-
 </script>
 
 <template>
-  <section class="mb-20">
-    <h2 class="text-2xl text-center font-semibold mb-4">Documentos Subidos</h2>
+  <section>
+    <div class="flex flex-col gap-4">
+      <h2 class="text-3xl text-center font-semibold">Documentos</h2>
 
-    <!-- Mostrar mensaje de error -->
-    <div v-if="error" class="error-message p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-      {{ error }}
-      <button @click="cargarArchivos" class="ml-2 underline">Reintentar</button>
-    </div>
+      <!-- Mostrar mensaje de error -->
+      <div v-if="error" class="error-message p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        {{ error }}
+        <button @click="cargarArchivos" class="ml-2 underline">Reintentar</button>
+      </div>
 
-    <!-- Indicador de carga -->
-    <div v-if="cargando" class="text-center p-4">
-      <span class="loading-text">Cargando archivos...</span>
-    </div>
+      <!-- Indicador de carga -->
+      <div v-if="cargando" class="text-center p-4">
+        <span class="loading-text">Cargando archivos...</span>
+      </div>
 
-    <!-- Tabla de documentos -->
-    <div v-else-if="!error" class="table-container">
-      <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
-        <thead>
-          <tr>
-            <th class="p-2">Título</th>
-            <th class="p-2">Nombre PDF</th>
-            <th class="p-2">Estado</th>
-            <th class="p-2">Fecha</th>
-            <th class="p-2 text-center">Acciones</th>
-          </tr>
-        </thead>
+      <!-- Mensaje cuando no hay archivos -->
+      <div v-else-if="!error && archivos.length === 0" class="text-center py-6 bg-(--crema) rounded-xl">
+        <p class="text-lg font-semibold text-(--marron-suave)">No hay archivos disponibles</p>
+      </div>
 
-        <tbody>
-          <tr v-if="archivos.length === 0">
-            <td colspan="5" class="p-4 text-center">
-              No hay archivos disponibles
-            </td>
-          </tr>
+      <!-- Tabla de documentos -->
+      <div v-else-if="!error" class="table-container">
+        <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <thead>
+            <tr>
+              <th class="p-2">Título</th>
+              <th class="p-2">Nombre PDF</th>
+              <th class="p-2">Estado</th>
+              <th class="p-2">Fecha</th>
+              <th class="p-2 text-center">Acciones</th>
+            </tr>
+          </thead>
 
-          <tr v-else class="fila_content hover:bg-gray-50 border-b border-gray-200 transition-colors duration-200"
-            v-for="item in archivos" :key="item.id">
-            <td class="p-2" :title="item.titulo">
-              {{ item.titulo || 'Sin título' }}
-            </td>
-            <td class="p-2" :title="item.filename">
-              {{ formatearNombreArchivo(item.filename) }}
-            </td>
-            <td class="p-2 capitalize">
-              {{ item.estado || 'Sin estado' }}
-            </td>
-            <td class="p-2 text-gray-600 text-sm">
-              {{ formatearFecha(item.fecha_subida) }}
-            </td>
+          <tbody>
+            <tr class="fila_content hover:bg-gray-50 border-b border-gray-200 transition-colors duration-200"
+              v-for="item in archivos" :key="item.id">
+              <td class="p-2" :title="item.titulo">
+                {{ item.titulo || "Sin título" }}
+              </td>
+              <td class="p-2" :title="item.filename">
+                {{ formatearNombreArchivo(item.filename) }}
+              </td>
+              <td class="p-2 capitalize">
+                {{ item.estado || "Sin estado" }}
+              </td>
+              <td class="p-2 text-gray-600 text-sm">
+                {{ formatearFecha(item.fecha_subida) }}
+              </td>
 
-            <td class=" p-3 btn_container">
-              <div class="flex justify-center gap-2">
-                <a v-if="esUrlValida(item.url)"
-                  class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 text-sm"
-                  :href="item.url" target="_blank" rel="noopener noreferrer">
-                  Descargar
-                </a>
-                <span v-else class="mr-3 p-1 text-gray-400">
-                  No disponible
-                </span>
-                <button
-                  class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  @click="eliminar(item.id)" :disabled="cargando">
-                  Eliminar
-                </button>
-              </div>
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
+              <td class="p-3 btn_container">
+                <div class="flex justify-center gap-2">
+                  <a v-if="esUrlValida(item.url)"
+                    class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 text-sm"
+                    :href="item.url" target="_blank" rel="noopener noreferrer">
+                    Descargar
+                  </a>
+                  <span v-else class="mr-3 p-1 text-gray-400">
+                    No disponible
+                  </span>
+                  <button
+                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    @click="eliminar(item.id)" :disabled="cargando">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 </template>
@@ -244,7 +244,6 @@ defineExpose({
 
 .table-container {
   overflow-x: auto;
-  /* Para tablas responsivas */
 }
 
 table {

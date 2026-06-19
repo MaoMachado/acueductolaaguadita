@@ -4,58 +4,43 @@ import Cards from '../components/Cards.vue'
 </script>
 
 <template>
-  <section class="flex flex-col gap-10 p-6">
-    <header class="text-center space-y-2">
-      <h1 class="text-2xl text-balance font-semibold lg:font-bold lg:text-5xl">Bienvenido A La Plataforma De Gestión
+  <main class="flex flex-col gap-3">
+    <header class="flex flex-col gap-4 items-center text-center shadow">
+      <h1
+        class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro)">
+        Bienvenido A La Plataforma De Gestión
       </h1>
-      <p class="text-lg lg:text-xl">
+      <p class="text-lg text-(--marron-suave) lg:text-xl">
         Asociación Acueducto Veredal La Aguadita - Fresno, Tolima
       </p>
     </header>
 
-    <article class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-      <Cards static="146" title="Usuarios Activos" subtitle="Conectados Al Acueducto" icon="👨‍👩‍👧‍👦" />
-      <Cards static="730" title="Población Estimada" subtitle="Conectados Al Acueducto" icon="🗺️" />
-      <Cards static="Quebrada Chorro De Isidro" title="Fuente De Agua" subtitle="Ubicado En Fresno, Tolima" icon="💧" />
-    </article>
+    <section class="p-6 flex flex-col gap-4">
+      <article class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+        <Cards static="146" title="Usuarios Activos" subtitle="Conectados Al Acueducto" icon="👨‍👩‍👧‍👦" />
+        <Cards static="730" title="Población Estimada" subtitle="Conectados Al Acueducto" icon="🗺️" />
+        <Cards static="Quebrada Chorro De Isidro" title="Fuente De Agua" subtitle="Ubicado En Fresno, Tolima"
+          icon="💧" />
+      </article>
 
-    <figure class="w-9/12 m-auto">
-      <img class="w-full" :src="imgMapa" alt="Imagen Del Rio">
-      <figcaption class="text-2xl text-center mt-4">
-        Ubicación de la fuente principal del agua que se distribuye a todos los usuarios.
-      </figcaption>
-    </figure>
-  </section>
+      <figure>
+        <img class="w-full" :src="imgMapa" alt="Imagen Del Rio">
+        <figcaption class="text-2xl text-center mt-4">
+          Ubicación de la fuente principal del agua que se distribuye a todos los usuarios.
+        </figcaption>
+      </figure>
+    </section>
+  </main>
 </template>
 
 <style scoped>
 header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  position: relative;
-  padding-block-end: 0.8rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    opacity: 0.5;
-    border-radius: 50rem;
-    background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
-  }
-
-  &>h1 {
-    color: var(--verde-oscuro);
-  }
-
-  &>p {
-    color: var(--marron-suave);
-    opacity: 0.8;
-  }
+  display: flex;
+  flex-direction: column;
+  padding-block: 5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
 }
-
 
 .card {
   display: flex;
@@ -64,7 +49,7 @@ header {
   background: var(--crema);
 }
 
-figcaption{
+figcaption {
   font-family: (--fuente-titulo);
 }
 </style>

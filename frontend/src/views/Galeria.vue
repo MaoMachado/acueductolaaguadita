@@ -87,23 +87,24 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+  <section class="flex flex-col gap-3">
     <header class="backdrop-blur-md bg-white/80 shadow-lg sticky top-0 z-40 border-b border-emerald-100">
       <div class="max-w-7xl mx-auto px-6 py-8">
-        <div class="text-center space-y-4">
-          <h1 class="text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-            Galería De Evidencias Comunitarias</h1>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <div class="text-center flex flex-col gap-4">
+          <h1
+            class="text-5xl font-bold bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro) bg-clip-text text-transparent">
+            Galería De Evidencias Comunitarias
+          </h1>
+          <p class="text-lg text-(--marron-suave) lg:text-xl">
             Fotografías y registros visuales de las actividades de la Asociación Acueducto La Aguadita.
           </p>
 
-          <!-- Barra de busqueda -->
-          <article class="max-w-md mx-auto mt-6">
+          <article class="max-w-md mx-auto">
             <div class="relative">
               <input type="text" v-model="filtroTexto" placeholder="Buscar Imagenes"
-                class="w-full pl-12 pr-4 py-3 rounded-full border-2 border-emerald-200 focus:border-emerald-400 focus:outline-none transition-colors bg-white/90 backdrop-blur-sm">
-              <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-emerald-400" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
+                class="w-full pl-12 pr-4 py-3 rounded-full border-2 border-(--beige-oscuro-80) focus:border-(--beige-oscuro) focus:outline-none transition-colors bg-white/90 backdrop-blur-sm">
+              <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-(--beige-oscuro-60)"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -168,7 +169,7 @@ onMounted(() => {
 
               <!-- Overlay con efectos -->
               <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div class="absolute bottom-4 left-4 right-4">
                   <div class="flex items-center justify-between text-white">
                     <span class="text-sm font-medium bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">

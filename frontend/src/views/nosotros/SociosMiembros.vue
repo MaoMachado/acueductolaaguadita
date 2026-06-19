@@ -5,11 +5,13 @@ import { juntaDirectiva } from '../../data/juntaDirectiva.js'
 
 <template>
   <article class="container rounded-xl">
-    <div class="flex flex-col gap-8 p-4">
-      <h2 class="lg:text-4xl font-light mb-2 text-center text-balance">
-        SOCIOS FUNDADORES DE LA ASOCIACIÓN USUARIOS ACUEDUCTO LA
-        AGUADITA
-      </h2>
+    <section class="flex flex-col gap-8 p-4">
+      <header>
+        <h2 class="lg:text-2xl font-semibold">
+          SOCIOS FUNDADORES DE LA ASOCIACIÓN USUARIOS ACUEDUCTO LA
+          AGUADITA
+        </h2>
+      </header>
 
       <table class="w-full border-collapse">
         <thead>
@@ -54,11 +56,20 @@ import { juntaDirectiva } from '../../data/juntaDirectiva.js'
           </tr>
         </tbody>
       </table>
-    </div>
+    </section>
   </article>
 </template>
 
 <style scoped>
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
+  text-align: center;
+}
+
 table {
   background-color: var(--blanco);
   border-radius: 1rem;

@@ -58,41 +58,57 @@ const monitoreo = [
 </script>
 
 <template>
-  <main class="p-2 lg:px-16 lg:py-8">
-    <header class="flex flex-col gap-4 mb-6">
-      <h2 class="text-center text-balance text-(--verde-oscuro) lg:font-bold lg:text-3xl">Informe de Obras en Ejecución
-        en la Asociación Acueducto La Aguadita</h2>
-
-      <div class="border border-(--beige-oscuro-40) rounded-full" />
-
-      <p class="text-justify text-(--marron-suave) lg:text-xl">
-        La Asociación Acueducto La Aguadita está comprometida con la gestión sostenible y eficiente del recurso hídrico
-        en nuestra comunidad. A continuación, se presentan las obras en ejecución que estamos llevando a cabo para
-        garantizar la calidad y disponibilidad del agua para nuestros usuarios:
-      </p>
-    </header>
-
-    <article>
-      <div>
-        <ol class="flex flex-col gap-4 list-decimal ml-4">
-          <ListItem title="Mantenimiento de las Cuencas y la Represa" :items="mantenimientoList" />
-          <ListItem title="Siembra de Árboles" :items="siembreList" />
-          <ListItem title="Convites Comunitarios" :items="convitesList" />
-          <ListItem title="Mantenimiento de la Tubería" :items="mantenimientoTubList" />
-          <ListItem title="Monitoreo del Caudal y la Cuenca Hídrica" :items="mantenimientoTubList" />
-        </ol>
-      </div>
-    </article>
-
-    <footer class="mt-6 bg-(--crema-60) p-3 rounded-lg">
-      <div>
-        <p class="text-justify font-light lg:text-lg text-(--marron-suave)">
-          Estas obras en ejecución demuestran nuestro compromiso con la gestión sostenible y eficiente del recurso
-          hídrico en nuestra comunidad. Estamos trabajando arduamente para garantizar la calidad y disponibilidad
-          del
-          agua para nuestros usuarios y proteger el medio ambiente.
+  <main class="flex flex-col gap-3">
+    <header
+      class="flex flex-col gap-4 items-center text-center shadow bg-linear-to-t from-(--beige-principal-20) to-(--crema-20)">
+      <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-4">
+        <h2
+          class="text-2xl font-semibold lg:font-bold lg:text-4xl text-transparent bg-clip-text bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro)">
+          Informe de Obras en
+          Ejecución
+          en la Asociación Acueducto La Aguadita
+        </h2>
+        <p class="text-lg text-(--marron-suave) lg:text-xl">
+          La Asociación Acueducto La Aguadita está comprometida con la gestión sostenible y eficiente del recurso
+          hídrico
+          en nuestra comunidad. A continuación, se presentan las obras en ejecución que estamos llevando a cabo para
+          garantizar la calidad y disponibilidad del agua para nuestros usuarios:
         </p>
       </div>
-    </footer>
+    </header>
+
+    <section class="p-6 flex flex-col gap-4">
+      <article>
+        <div>
+          <ol class="flex flex-col gap-4 list-decimal ml-4">
+            <ListItem title="Mantenimiento de las Cuencas y la Represa" :items="mantenimientoList" />
+            <ListItem title="Siembra de Árboles" :items="siembreList" />
+            <ListItem title="Convites Comunitarios" :items="convitesList" />
+            <ListItem title="Mantenimiento de la Tubería" :items="mantenimientoTubList" />
+            <ListItem title="Monitoreo del Caudal y la Cuenca Hídrica" :items="mantenimientoTubList" />
+          </ol>
+        </div>
+      </article>
+
+      <footer class="mt-6 bg-(--crema-60) p-3 rounded-lg">
+        <div>
+          <p class="text-justify font-light lg:text-lg text-(--marron-suave)">
+            Estas obras en ejecución demuestran nuestro compromiso con la gestión sostenible y eficiente del recurso
+            hídrico en nuestra comunidad. Estamos trabajando arduamente para garantizar la calidad y disponibilidad
+            del
+            agua para nuestros usuarios y proteger el medio ambiente.
+          </p>
+        </div>
+      </footer>
+    </section>
   </main>
 </template>
+
+<style scoped>
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+}
+</style>
