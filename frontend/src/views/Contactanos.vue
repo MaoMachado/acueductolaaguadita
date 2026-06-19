@@ -16,7 +16,7 @@ const mensajeExito = ref('');
 const cargando = ref(false);
 const error = ref('');
 
-const enviarFomulario = async () => {
+const enviarFormulario = async () => {
 
   if (!nombreInput.value.trim() || !emailInput.value.trim() || !asuntoInput.value.trim() || !mensajeInput.value.trim()) {
     error.value = '⚠️ Todos los campos son obligatorios';
@@ -89,11 +89,16 @@ const enviarFomulario = async () => {
 </script>
 
 <template>
-  <main class="w-full h-screen content-center">
+  <main class="h-ful">
     <section class="flex flex-col gap-4">
+      <header class="flex flex-col gap-4 items-center text-center">
+        <h2 class="text-center text-4xl text-(--verde-oscuro)">Contacto - Acueducto Acueducto La Aguadita</h2>
+        <p class="text-lg text-(--marron-suave) lg:text-xl">
+          Asociación Acueducto Veredal La Aguadita - Fresno, Tolima
+        </p>
+      </header>
 
-      <h1 class="text-center text-3xl font-bold">Contacto - Acueducto Acueducto La Aguadita</h1>
-      <form @submit.prevent="enviarFomulario" class="min-w-sm mx-auto shadow-sm p-4 rounded-xl flex flex-col gap-4">
+      <form @submit.prevent="enviarFormulario" class="min-w-md mx-auto p-6 rounded-xl flex flex-col gap-4 bg-linear-to-r from-(--gris-suave-20) to-(--beige-principal-20) border-2 border-(--beige-oscuro-20)">
         <div class="input_content">
           <input type="text" id="nombre" v-model="nombreInput">
           <label for="nombre" :class="{ active: nombreInput }">Nombre Y Apellido:</label>
@@ -126,12 +131,15 @@ const enviarFomulario = async () => {
 </template>
 
 <style scoped>
-h1 {
-  color: var(--verde-oscuro);
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
 }
 
 form {
-  background: var(--crema);
 
   & .input_content {
     display: flex;
@@ -143,12 +151,12 @@ form {
     & input,
     textarea {
       inline-size: 100%;
-      outline: 2px solid var(--beige-oscuro);
+      outline: 2px solid var(--beige-oscuro-40);
       border-radius: 1rem;
       padding: 0.5rem;
 
       &:focus {
-        outline: 2px solid var(--verde-principal);
+        outline: 2px solid var(--beige-oscuro);
       }
 
       &:focus~img {

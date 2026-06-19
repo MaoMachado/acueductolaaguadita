@@ -1,38 +1,66 @@
-<template>
-  <main class="container flex flex-col gap-8 p-4">
-    <article class="bg-green-50 p-4 rounded-2xl shadow">
-      <h2 class="text-2xl text-center font-semibold mb-4">Nuestro Compromiso</h2>
-      <p class="mb-4 text-lg">Nos comprometemos a:</p>
-      <ol class="list-disc ml-5 text-lg">
-        <li>
-          <p>Proporcionar agua para consumo humano de manera eficiente y sostenible.</p>
-        </li>
-        <li>
-          <p>Garantizar la calidad del agua para consumo humano.</p>
-        </li>
-        <li>
-          <p>Promover la participación ciudadana y la transparencia en nuestras acciones.</p>
-        </li>
-        <li>
-          <p>Proteger los recursos hídricos y contribuir al bienestar y desarrollo de nuestra comunidad.</p>
-        </li>
-      </ol>
-    </article>
+<script setup>
+const data = {
+  compromiso: {
+    title: "Nuestro Compromiso",
+    subtitle: "Nos comprometemos a:",
+    items: [
+      "Proporcionar agua para consumo humano de manera eficiente y sostenible.",
+      "Garantizar la calidad del agua para consumo humano.",
+      "Promover la participación ciudadana y la transparencia en nuestras acciones.",
+      "Proteger los recursos hídricos y contribuir al bienestar y desarrollo de nuestra comunidad."
+    ]
+  },
+  valores: {
+    title: "Nuestros Valores Corporativos",
+    subtitle: "Responsabilidad",
+    items: [
+      "Asumir la responsabilidad de proporcionar agua para consumo humano de manera eficiente y sostenible.",
+      "Estar comprometidos con la comunidad y con la protección de los recursos hídricos.",
+      "Actuar con transparencia en nuestras acciones y decisiones, rindiendo cuentas a la comunidad sobre nuestra gestión.",
+      "Fomentar la participación activa de la comunidad en la toma de decisiones y la gestión del acueducto."
+    ]
+  }
+}
+</script>
 
-    <article class="bg-green-50 p-4 rounded-2xl shadow">
-      <h2 class="text-2xl font-semibold mb-2 text-center">Nuestros Valores Corporativos</h2>
-      <ul class="list-disc list-inside">
-        <li><strong>Responsabilidad:</strong> Asumir la responsabilidad de proporcionar agua para consumo humano de
-          manera eficiente y sostenible.</li>
-        <li><strong>Responsabilidad:</strong> Estar comprometidos con la comunidad y con la protección de los recursos
-          hídricos.</li>
-        <li><strong>Responsabilidad:</strong> Actuar con transparencia en nuestras acciones y decisiones, rindiendo
-          cuentas a la comunidad sobre nuestra gestión.</li>
-        <li><strong>Responsabilidad:</strong> Fomentar la participación activa de la comunidad en la toma de decisiones
-          y la gestión del acueducto.</li>
-      </ul>
-    </article>
+<template>
+  <main class="grid place-content-center container h-full p-4">
+    <div class="flex flex-col gap-8">
+      <article class="flex flex-col gap-3">
+        <header class="px-10">
+          <h2 class="text-2xl text-center font-semibold">{{ data.compromiso.title }}</h2>
+          <h3 class="text-lg">{{ data.compromiso.subtitle }}</h3>
+        </header>
+        <ol class="list-none text-center">
+          <li v-for="item in data.compromiso.items" :key="item" class="text-xl">
+            <p>{{ item }}</p>
+          </li>
+        </ol>
+      </article>
+
+      <article class="flex flex-col gap-3">
+        <header>
+          <h2 class="text-2xl text-center font-semibold mb-2">{{ data.valores.title }}</h2>
+        </header>
+        <ol class="list-none">
+          <li v-for="item in data.valores.items" :key="item" class="text-xl px-5">
+            <p>
+              <strong>{{ data.valores.subtitle }}: </strong>
+              {{ item }}
+            </p>
+          </li>
+        </ol>
+      </article>
+    </div>
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+header {
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem;
+  border-bottom: 2px solid var(--beige-oscuro-40);
+  background: var(--beige-principal-20);
+}
+</style>
