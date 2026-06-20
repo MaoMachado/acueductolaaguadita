@@ -8,12 +8,14 @@ import {
   onBeforeUnmount,
   computed,
 } from "vue";
-
-const API = import.meta.env.VITE_API_URL;
+import { apiFetch } from "../utils/api";
+import { useToast } from "../composables/useToast.js";
 
 const props = defineProps({
   mostrar: Boolean,
 });
+
+const toast = useToast();
 
 const emit = defineEmits(["cerrar", "imagen-subida"]);
 
@@ -51,12 +53,14 @@ function seleccionarImagen(e) {
   error.value = "";
 
   if (!file) {
+    toast.mostrar('No se seleccionó ningún archivo', 'error');
     archivo.value = null;
     return;
   }
 
   // => Validar tipo de archivo (Imagen)
   if (!file.type.startsWith("image/")) {
+    toast.mostrar("Solo se permiten archivos de imagen", 'error')
     error.value = "Solo se permiten archivos de imagen";
     archivo.value = null;
     return;
@@ -65,6 +69,7 @@ function seleccionarImagen(e) {
   // => Validar tamaño de archivo (Max 5MB)
   const maxSize = 5 * 1024 * 1024; // 5MB
   if (file.size > maxSize) {
+    toast.mostrar("El archivo debe ser menor a 5MB", 'error');
     error.value = "El archivo debe ser menor a 5MB";
     archivo.value = null;
     return;
@@ -77,6 +82,7 @@ function seleccionarImagen(e) {
     const maxHeight = 4000;
 
     if (this.width > maxWidth || this.height > maxHeight) {
+      toast.mostrar(`Resolución demasiada alta. Máximo ${maxWidth}x${maxHeight} píxeles`, 'error');
       error.value = `Resolución demasiada alta. Máximo ${maxWidth}x${maxHeight} píxeles`;
       archivo.value = null;
       return;
@@ -90,6 +96,7 @@ function seleccionarImagen(e) {
 // => Función para subir la imagen
 async function subirImagen() {
   if (!formularioValido.value) {
+    toast.mostrar("Por favor completa todos los campos", 'error');
     error.value = "Por favor completa todos los campos";
     return;
   }
@@ -102,11 +109,8 @@ async function subirImagen() {
     cargando.value = true;
     error.value = "";
 
-    const response = await fetch(`${API}/upload`, {
+    const response = await apiFetch('/upload', {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: formData,
     });
 
@@ -176,11 +180,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section
-    v-if="mostrar"
+  <section v-if="mostrar"
     class="h-screen fixed inset-0 bg-black/50 backdrop-blur-sm backdrop-grayscale flex items-center justify-center z-50"
-    @click="handleClickOutside"
-  >
+    @click="handleClickOutside">
     <div class="dialog p-6 rounded-xl shadow-lg w-full max-w-md space-y-4">
       <h2 class="text-2xl font-bold text-gray-800 text-center">Subir Imagen</h2>
 
@@ -189,15 +191,8 @@ onBeforeUnmount(() => {
         <label for="nombre" class="block text-sm font-medium text-gray-700">
           Nombre de la imagen
         </label>
-        <input
-          id="nombre"
-          type="text"
-          v-model="nombre"
-          placeholder="Ingrese El Nombre De La Imagen"
-          class="w-full p-3 rounded-lg titulo_archivo"
-          :disabled="cargando"
-          maxlength="50"
-        />
+        <input id="nombre" type="text" v-model="nombre" placeholder="Ingrese El Nombre De La Imagen"
+          class="w-full p-3 rounded-lg titulo_archivo" :disabled="cargando" maxlength="50" />
         <small class="text-gray-500">{{ nombre.length }}/50 caracteres</small>
       </div>
 
@@ -206,31 +201,14 @@ onBeforeUnmount(() => {
         <label for="imagen" class="block text-sm font-medium text-gray-700">
           Seleccionar imagen
         </label>
-        <input
-          id="imagen"
-          type="file"
-          @change="seleccionarImagen"
-          accept="image/*"
-          :disabled="cargando"
-          class="hidden"
-        />
-        <label
-          for="imagen"
+        <input id="imagen" type="file" @change="seleccionarImagen" accept="image/*" :disabled="cargando"
+          class="hidden" />
+        <label for="imagen"
           class="upload-label cursor-pointer block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center hover:border-green-400 hover:bg-green-50 transition-colors"
-          :class="{ 'opacity-50 cursor-not-allowed': cargando }"
-        >
-          <svg
-            class="mx-auto h-8 w-8 text-gray-400 mb-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
+          :class="{ 'opacity-50 cursor-not-allowed': cargando }">
+          <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span class="text-sm text-gray-600">
             {{
@@ -247,49 +225,27 @@ onBeforeUnmount(() => {
       <div v-if="previewUrl" class="preview-container">
         <p class="text-sm font-medium text-gray-700 mb-2">Vista previa:</p>
         <div class="preview-wrapper">
-          <img
-            :src="previewUrl"
-            :alt="nombre || 'Vista previa'"
-            class="preview-image rounded-lg shadow-sm"
-          />
+          <img :src="previewUrl" :alt="nombre || 'Vista previa'" class="preview-image rounded-lg shadow-sm" />
         </div>
       </div>
 
       <!-- Información del archivo seleccionado -->
-      <div
-        v-if="infoImagen"
-        class="archivo-info p-3 bg-green-50 border border-green-200 rounded-lg"
-      >
+      <div v-if="infoImagen" class="archivo-info p-3 bg-green-50 border border-green-200 rounded-lg">
         <p class="text-sm font-medium text-green-800">Imagen seleccionada:</p>
         <p class="text-sm text-green-700">{{ infoImagen.nombre }}</p>
         <p class="text-xs text-green-600">Tamaño: {{ infoImagen.tamaño }}</p>
       </div>
 
-      <div
-        v-else-if="!archivo && !error"
-        class="texto-pendiente text-center text-gray-500 italic"
-      >
+      <div v-else-if="!archivo && !error" class="texto-pendiente text-center text-gray-500 italic">
         No hay imagen seleccionada
       </div>
 
       <!-- Mostrar errores -->
-      <div
-        v-if="error"
-        class="error-message p-3 bg-red-50 border border-red-200 rounded-lg"
-      >
+      <div v-if="error" class="error-message p-3 bg-red-50 border border-red-200 rounded-lg">
         <div class="flex items-center">
-          <svg
-            class="h-5 w-5 text-red-400 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+          <svg class="h-5 w-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p class="text-sm text-red-600">{{ error }}</p>
         </div>
@@ -297,34 +253,18 @@ onBeforeUnmount(() => {
 
       <!-- Botones de acción -->
       <div class="flex justify-end gap-3 pt-4">
-        <button
-          @click="cancelar"
+        <button @click="cancelar"
           class="px-6 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium"
-          :disabled="cargando"
-        >
+          :disabled="cargando">
           Cancelar
         </button>
-        <button
-          @click="subirImagen"
-          :disabled="!formularioValido"
-          class="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-        >
+        <button @click="subirImagen" :disabled="!formularioValido"
+          class="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
           <span v-if="cargando" class="flex items-center gap-2">
             <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-                fill="none"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
             Subiendo...
           </span>
@@ -412,6 +352,7 @@ onBeforeUnmount(() => {
 }
 
 @keyframes shake {
+
   0%,
   100% {
     transform: translateX(0);

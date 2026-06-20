@@ -70,7 +70,7 @@ async function login() {
           <label for="password" class="w-10 h-10  bg-(--crema) p-1 rounded-full">
             <img :src="passIcon" alt="Contraseña" class="w-full h-full object-cover" />
           </label>
-          <input type="password" v-model="password" id="password"
+          <input type="password" v-model="password" id="password" autocomplete="off"
             class="text-xl bg-(--blanco) border-2 border-(--beige-oscuro-60) rounded-md px-4 py-1 focus:outline-none focus:border-(--verde-claro) focus:ring-1 focus:ring-(--verde-claro-60) transition-all duration-300" />
         </div>
 

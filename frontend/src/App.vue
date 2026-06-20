@@ -2,10 +2,13 @@
 import Header from './components/common/Header.vue';
 import Sidebar from './components/common/Sidebar.vue';
 import Footer from './components/common/Footer.vue';
+import ToastRenderer from './components/ToastRenderer.vue';
 </script>
 
 <template>
   <section class="flex min-h-screen">
+    <ToastRenderer />
+
     <article class="container_header flex flex-col justify-between h-screen">
       <Header />
       <Sidebar />

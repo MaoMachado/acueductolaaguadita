@@ -23,6 +23,7 @@ const ORIGINS = process.env.CORS_ORIGINS?.split(",") || [
   "http://localhost:5173",
 ];
 
+
 const app = express();
 app.use(helmet());
 app.use(cors({ origin: ORIGINS }));
@@ -274,8 +275,6 @@ app.post("/login", loginLimiter, async (req, res) => {
   const username = req.body.username?.trim();
   const password = req.body.password?.trim();
 
-  console.log("1️⃣ Llegó la petición:", { username, password });
-
   if (!username || !password) {
     return res.status(400).json({ error: "Los campos son necesarios." });
   }
@@ -287,15 +286,10 @@ app.post("/login", loginLimiter, async (req, res) => {
       .eq("username", username)
       .single();
 
-    console.log("2️⃣ Usuario encontrado en BD:", users);
-    console.log("2️⃣ Error Supabase:", queryError);
-
     if (!users)
       return res.status(401).json({ error: "Credenciales inválidas" });
 
     const valida = await bcrypt.compare(password, users.password);
-
-    console.log("3️⃣ Resultado bcrypt.compare:", valida);
 
     if (!valida)
       return res.status(401).json({ error: "Credenciales inválidas" });
@@ -306,7 +300,6 @@ app.post("/login", loginLimiter, async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN || "8h" },
     );
 
-    console.log("4️⃣ Token generado correctamente");
     res.json({ token, message: "Inicio de sesión exitoso" });
   } catch (err) {
     console.error("💥 Error login:", err.message);

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import SubirArchivoDialog from "../components/SubirArchivoDialog.vue";
 import TablaArchivos from "../components/TablaArchivos.vue";
 import SubirImagenDialog from "../components/SubirImagenDialog.vue";
@@ -7,7 +7,36 @@ import TablaImagenes from "../components/TablaImagenes.vue";
 import Login from "../components/Login.vue";
 
 const cargando = ref(false);
-const token = ref(localStorage.getItem("token"));
+
+function tokenValido() {
+  const t = localStorage.getItem('token');
+
+  if (!t) return null;
+
+  try {
+    const payload = JSON.parse(atob(t.split(".")[1]));
+    if (payload.exp * 1000 < Date.now()) {
+      localStorage.removeItem('token');
+      return null;
+    }
+
+    return t;
+  } catch {
+    localStorage.removeItem('token');
+    return null;
+  }
+}
+
+const token = ref(tokenValido());
+
+function manejarLogin() {
+  token.value = tokenValido()
+}
+
+function manejarLogout() {
+  token.value = null;
+  localStorage.removeItem('token')
+}
 
 // Dialog Subir Archivos
 const mostrarDialogArchivo = ref(false);
@@ -22,16 +51,6 @@ const recargarTablaImagenes = ref(false);
 
 function actualizarTabla() {
   recargarTablaImagenes.value = !recargarTablaImagenes.value;
-}
-
-function manejarLogin() {
-  token.value = localStorage.getItem("token");
-}
-
-// Función para manejar el logout (opcional pero recomendada)
-function manejarLogout() {
-  token.value = null;
-  localStorage.removeItem("token");
 }
 
 // Corregidas las funciones de callback para los eventos
@@ -75,15 +94,15 @@ function manejarImagenSubida() {
           <button @click="manejarLogout">Cerrar Sesión</button>
         </div>
 
-        <SubirArchivoDialog :token="token" :mostrar="mostrarDialogArchivo" @cerrar="mostrarDialogArchivo = false"
+        <SubirArchivoDialog :mostrar="mostrarDialogArchivo" @cerrar="mostrarDialogArchivo = false"
           @archivo-subido="recargarTablaArchivos" />
 
-        <SubirImagenDialog :token="token" :mostrar="mostrarDialogImagen" @cerrar="mostrarDialogImagen = false"
+        <SubirImagenDialog :mostrar="mostrarDialogImagen" @cerrar="mostrarDialogImagen = false"
           @imagen-subida="recargarTablaImagenes" />
 
         <!-- Tablas -->
-        <TablaArchivos :recargar="recargarTablaArchivos" :token="token" />
-        <TablaImagenes :recargar="recargarTablaImagenes" :token="token" />
+        <TablaArchivos :recargar="recargarTablaArchivos" />
+        <TablaImagenes :recargar="recargarTablaImagenes" />
       </div>
     </section>
   </main>

@@ -1,12 +1,13 @@
 <script setup>
-
 import { ref, onMounted, watch, defineProps, defineExpose } from 'vue';
+import { apiFetch } from '../utils/api';
+import { useToast } from '../composables/useToast.js';
+
+const toast = useToast();
 
 const props = defineProps({
-  recargar: Boolean
+  recargar: Boolean,
 });
-
-const API = import.meta.env.VITE_API_URL;
 
 const imagenes = ref([]);
 const cargando = ref(false);
@@ -18,7 +19,7 @@ async function cargarImagenes() {
     error.value = null;
     cargando.value = true;
 
-    const res = await fetch(`${API}/imagenes`);
+    const res = await apiFetch(`/imagenes`);
 
     if (!res.ok) {
       throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
@@ -44,7 +45,7 @@ async function cargarImagenes() {
 async function eliminar(id) {
   // Validar que el ID existe
   if (!id) {
-    alert('ID de imagen inválido');
+    toast.mostrar('ID de imagen inválido', 'error');
     return;
   }
 
@@ -56,7 +57,7 @@ async function eliminar(id) {
   const imagenAEliminar = imagenes.value.find(img => img.id === id);
 
   if (!imagenAEliminar) {
-    alert('Imagen no encontrada');
+    toast.mostrar('Imagen no encontrada', 'error');
     return;
   }
 
@@ -65,10 +66,9 @@ async function eliminar(id) {
     imagenes.value = imagenes.value.filter(img => img.id !== id);
 
     // 2. Llamar al backend
-    const res = await fetch(`${API}/imagenes/${id}`, {
+    const res = await apiFetch(`/imagenes/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
@@ -82,17 +82,17 @@ async function eliminar(id) {
         const errorData = await res.json();
         errorMessage = errorData.error || errorMessage;
       } catch {
-        // Si no puede parsear el JSON, usar mensaje genérico
       }
 
       throw new Error(errorMessage);
     }
 
+    toast.mostrar("Imagen eliminada exitosamente");
     console.log(`Imagen ${imagenAEliminar.nombre} eliminada correctamente`);
 
   } catch (error) {
     console.error('Error al eliminar la imagen:', error);
-    alert(`No se pudo eliminar la imagen: ${error.message}`);
+    toast.mostrar(error.message, 'error');
 
     // Asegurar que la imagen esté restaurada si no estaba
     if (!imagenes.value.find(img => img.id === id)) {
@@ -200,7 +200,7 @@ defineExpose({
               <div class="flex justify-center">
                 <img v-if="esUrlImagenValida(img.url)" :src="img.url" :alt="img.nombre || 'Imagen'"
                   class="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:scale-105 transition-transform duration-200"
-                  @error="manejarErrorImagen" @click="abrirImagenCompleta(`${API}${img.url}`, img.nombre)" />
+                  @error="manejarErrorImagen" @click="abrirImagenCompleta(`${img.url}`, img.nombre)" />
                 <div v-else class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
                   <span class="text-gray-400 text-xs">No disponible</span>
                 </div>

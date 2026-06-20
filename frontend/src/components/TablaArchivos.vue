@@ -1,16 +1,18 @@
 <script setup>
 
 import { ref, onMounted, watch, defineProps, defineExpose } from 'vue';
-
-const API = import.meta.env.VITE_API_URL;
+import { apiFetch } from '../utils/api';
+import { useToast } from '../composables/useToast.js';
 
 const archivos = ref([]);
 const cargando = ref(false);
 const error = ref(null);
 
 const props = defineProps({
-  recargar: Boolean
+  recargar: Boolean,
 });
+
+const toast = useToast();
 
 // => Cargar la información del backend
 async function cargarArchivos() {
@@ -18,7 +20,7 @@ async function cargarArchivos() {
     error.value = '';
     cargando.value = true;
 
-    const res = await fetch(`${API}/documentos`);
+    const res = await apiFetch('/documentos');
 
     if (!res.ok) {
       throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
@@ -64,10 +66,9 @@ async function eliminar(id) {
     archivos.value = archivos.value.filter(a => a.id !== id);
 
     // 2. Llamar al backend
-    const response = await fetch(`${API}/documentos/${id}`, {
+    const response = await apiFetch(`/documentos/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
@@ -89,12 +90,12 @@ async function eliminar(id) {
     }
 
     // 3. Confirmar éxito
-    alert('Archivo eliminado exitosamente');
+    toast.mostrar("Archivo eliminado exitosamente")
     console.log(`Archivo ${archivoAEliminar.titulo} eliminado correctamente`);
 
   } catch (error) {
     console.error('Error eliminando archivo:', error);
-    alert(`No se pudo eliminar el archivo: ${error.message}`);
+    toast.mostrar(error.message, 'error');
 
     // Asegurar que el archivo esté restaurado si no estaba
     if (!archivos.value.find(a => a.id === id)) {
