@@ -1,9 +1,25 @@
+<script setup>
+const headerTitle = [
+  "text-2xl",
+  "font-semibold",
+  "text-balance",
+  "text-transparent",
+  "bg-clip-text",
+  "bg-linear-to-r",
+  "from-sky-600",
+  "to-sky-400",
+  "lg:font-bold",
+  "lg:text-3xl"
+]
+</script>
+
 <template>
-  <main class="container h-full grid place-content-center">
-    <section class="bg-(--gris-suave-20) p-6 rounded-lg">
-      <ol class="list-decimal p-5">
-        <li class="mb-4 text-lg lg:text-xl">FORMACIÓN EN CULTURA DEL AGUA
-          <ul class="list-disc ml-4 text-sm lg:text-lg">
+  <article class="container px-5 md:px-10 lg:px-15 mt-20">
+    <section>
+      <ol class="list-none w-fit mx-auto">
+        <li class="mb-4">
+          <h2 :class="headerTitle">FORMACIÓN EN CULTURA DEL AGUA</h2>
+          <ul class="list-disc ml-10 text-sm lg:text-xl font-light">
             <li>
               Realizar talleres participativos sobre el ciclo del agua, importancia de la fuente hídrica y buenas
               prácticas de uso.
@@ -15,8 +31,9 @@
           </ul>
         </li>
 
-        <li class="mb-4 text-lg lg:text-xl">CAPACITACIÓN EN GESTIÓN DEL RIESGO
-          <ul class="list-disc ml-4 text-sm lg:text-lg">
+        <li class="mb-4">
+          <h2 :class="headerTitle">CAPACITACIÓN EN GESTIÓN DEL RIESGO</h2>
+          <ul class="list-disc ml-10 text-sm lg:text-xl font-light">
             <li>
               Entrenar a la comunidad en identificación de amenazas y signos de alerta temprana (turbidez, olores,
               fugas,
@@ -29,8 +46,9 @@
           </ul>
         </li>
 
-        <li class="mb-4 text-lg lg:text-xl">PARTICIPACIÓN EN EL MANTENIMIENTO PREVENTIVO
-          <ul class="list-disc ml-4 text-sm lg:text-lg">
+        <li class="mb-4">
+          <h2 :class="headerTitle">PARTICIPACIÓN EN EL MANTENIMIENTO PREVENTIVO</h2>
+          <ul class="list-disc ml-10 text-sm lg:text-xl font-light">
             <li>
               Involucrar a la comunidad en jornadas periódicas de limpieza, reforestación, mantenimiento de la
               infraestructura y protección del cauce.
@@ -42,5 +60,5 @@
         </li>
       </ol>
     </section>
-  </main>
+  </article>
 </template>

@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, watch, defineProps, defineExpose } from 'vue';
-import { apiFetch } from '../utils/api';
-import { useToast } from '../composables/useToast.js';
+import { ref, onMounted, watch } from 'vue';
+import { apiFetch } from '../../utils/api';
+import { useToast } from '../../composables/useToast.js';
 
 const toast = useToast();
 

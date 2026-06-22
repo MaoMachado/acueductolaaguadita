@@ -24,43 +24,38 @@ const data = {
 </script>
 
 <template>
-  <main class="grid place-content-center container h-full p-4">
-    <div class="flex flex-col gap-8">
-      <article class="flex flex-col gap-3">
-        <header class="px-10">
-          <h2 class="text-2xl text-center font-semibold">{{ data.compromiso.title }}</h2>
-          <h3 class="text-lg">{{ data.compromiso.subtitle }}</h3>
+  <article class="container h-full px-5 md:px-10 lg:px-15">
+    <section class="flex flex-col gap-8">
+      <article>
+        <header class="flex flex-col gap-4 items-center text-center justify-center h-30 mb-10">
+          <h2
+            class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400">
+            {{ data.compromiso.title }}</h2>
+          <h3 class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">{{ data.compromiso.subtitle }}</h3>
         </header>
         <ol class="list-none text-center">
-          <li v-for="item in data.compromiso.items" :key="item" class="text-xl">
+          <li v-for="item in data.compromiso.items" :key="item" class="lg:text-2xl mb-2">
             <p>{{ item }}</p>
           </li>
         </ol>
       </article>
 
       <article class="flex flex-col gap-3">
-        <header>
-          <h2 class="text-2xl text-center font-semibold mb-2">{{ data.valores.title }}</h2>
+        <header class="flex flex-col gap-4 items-center text-center justify-center h-30">
+          <h2
+            class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400">
+            {{ data.valores.title }}
+          </h2>
         </header>
-        <ol class="list-none">
-          <li v-for="item in data.valores.items" :key="item" class="text-xl px-5">
+        <ol class="list-none w-fit mx-auto">
+          <li v-for="item in data.valores.items" :key="item" class="lg:text-xl mb-2">
             <p>
-              <strong>{{ data.valores.subtitle }}: </strong>
+              <strong class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">{{ data.valores.subtitle }}: </strong>
               {{ item }}
             </p>
           </li>
         </ol>
       </article>
-    </div>
-  </main>
+    </section>
+  </article>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-direction: column;
-  padding-block: 2.5rem;
-  border-bottom: 2px solid var(--beige-oscuro-40);
-  background: var(--beige-principal-20);
-}
-</style>

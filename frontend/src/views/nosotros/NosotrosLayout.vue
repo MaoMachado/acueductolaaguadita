@@ -16,34 +16,22 @@ function cerrarMenuMovil() {
 </script>
 
 <template>
-  <main class="flex h-screen overflow-hidden relative bg-(--crema-40)">
+  <main class="flex flex-col h-screen overflow-hidden relative px-5 md:px-10 lg:px-15">
     <div v-if="menuMovilAbierto" @click="cerrarMenuMovil" class="overlay-movil lg:hidden"></div>
 
     <!-- Submenu Lateral -->
-    <aside class="sidebar" :class="{ 'sidebar-abierto': menuMovilAbierto }">
-      <header class="sidebar-header">
+    <aside class="sidebar py-4" :class="{ 'sidebar-abierto': menuMovilAbierto }">
+      <RouterLink to="/nosotros" class="sidebar-header bg-sky-600/40 hover:bg-sky-600/60 transition-all duration-300 rounded-2xl">
         <div class="sidebar-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2Z" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
         <h2 class="sidebar-title">Nosotros</h2>
-      </header>
+      </RouterLink>
 
       <nav class="sidebar-nav">
-        <RouterLink to="/nosotros" class="nav-link" @click="cerrarMenuMovil">
-          <div class="nav-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-          </div>
-          <span>Quiénes Somos</span>
-        </RouterLink>
 
         <RouterLink to="/nosotros/valores" class="nav-link" @click="cerrarMenuMovil">
           <div class="nav-icon">
@@ -130,17 +118,10 @@ function cerrarMenuMovil() {
           <span>Socios Y Miembros</span>
         </RouterLink>
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="progress-indicator">
-          <div class="progress-bar"></div>
-        </div>
-        <p class="sidebar-footer-text">Conoce más sobre nosotros</p>
-      </div>
     </aside>
 
     <!-- Contenido  -->
-    <main class="flex-1 h-screen overflow-auto">
+    <main class="flex-1 py-5 overflow-y-auto">
       <router-view v-slot="{ Component }">
         <transition name="slide-view" mode="out-in">
           <component :is="Component" />
@@ -225,8 +206,8 @@ function cerrarMenuMovil() {
 /* Sidebar */
 .sidebar {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -252,48 +233,46 @@ function cerrarMenuMovil() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--gris-suave-80);
+  gap: 0.25rem;
+  padding: 4px 10px;
 }
 
 .sidebar-icon {
   width: 40px;
   height: 40px;
-  background: var(--verde-principal);
-  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
 }
 
 .sidebar-title {
   font-size: 2em;
   font-weight: 500;
-  color: var(--verde-oscuro);
 }
 
 /* Navegación */
 .sidebar-nav {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
-  padding: 1.5rem;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
+  flex-direction: column;
+  padding: 5px 10px;
   border-radius: 1rem;
-  color: var(--gris-claro);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 300;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border: 2px solid var(--azul-profundo-20);
+
+  & span {
+    text-align: center;
+  }
 }
 
 .nav-link::before {
@@ -303,29 +282,24 @@ function cerrarMenuMovil() {
   left: 0;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
+  background: linear-gradient(90deg, var(--azul-turquesa-40), var(--verde-turquesa-60));
   transition: width 0.3s ease;
   z-index: -1;
 }
 
 .nav-link:hover {
-  color: var(--verde-oscuro);
-  background: rgba(34, 197, 94, 0.1);
-  transform: translateX(4px);
+  background: var(--azul-profundo);
+  transform: translateY(-4px);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
-.nav-link:hover::before {
-  width: 4px;
-}
-
-.nav-link.router-link-active {
-  background: var(--verde-claro);
+.nav-link.router-link-exact-active {
+  background: var(--azul-profundo);
   color: var(--blanco);
-  font-weight: 400;
+  transform: scale(1.05);
 }
 
-.nav-link.router-link-active::before {
+.nav-link.router-link-exact-active::before {
   width: 100%;
 }
 
@@ -339,32 +313,9 @@ function cerrarMenuMovil() {
 }
 
 .nav-link:hover .nav-icon,
-.nav-link.router-link-active .nav-icon {
+.nav-link.router-link-exact-active .nav-icon {
   opacity: 1;
   transform: scale(1.1);
-}
-
-/* Footer del sidebar */
-.sidebar-footer {
-  padding: 1.5rem;
-  background: var(--gris-suave-40);
-}
-
-.progress-indicator {
-  width: 100%;
-  height: 4px;
-  background: var(--beige-oscuro-40);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-}
-
-.progress-bar {
-  height: 100%;
-  width: 20%;
-  background: linear-gradient(90deg, var(--verde-principal), var(--verde-claro));
-  border-radius: 2px;
-  animation: progress-animation 3s ease-in-out infinite;
 }
 
 @keyframes progress-animation {

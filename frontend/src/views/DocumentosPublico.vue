@@ -31,12 +31,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="flex flex-col gap-3">
-    <header class="flex flex-col gap-4 items-center text-center shadow">
-      <h1 class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro)">
+  <section class="flex flex-col gap-3 px-5 md:px-10 lg:px-15">
+    <header class="flex flex-col gap-4 items-center text-center justify-center h-50">
+      <h1
+        class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400 text-shadow-sm text-shadow-white/10">
         Documentos Públicos Acueducto La Aguadita
       </h1>
-      <p class="text-lg text-(--marron-suave) lg:text-xl">
+      <p class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">
         Asociación Acueducto Veredal La Aguadita - Fresno, Tolima
       </p>
     </header>
@@ -44,29 +45,24 @@ onMounted(() => {
     <section class="p-6 flex flex-col gap-4">
       <div v-if="cargando" class="text-center text-gray-500">Cargando Documentos...</div>
 
-      <div v-if="error" class="bg-red-100 text-red-700 p-4 rounded text-center mb-6">
-        {{ error }}
-      </div>
-
       <div v-if="documentos.length === 0 && !cargando" class="text-center text-gray-500">
         No hay documentos disponibles.
       </div>
 
-      <article v-else class="flex justify-center">
-        <ul class="max-w-5xl container flex flex-col gap-2">
-          <li v-for="doc in documentos" :key="doc.id"
-            class="bg-(--gris-suave) p-4 shadow rounded-xl flex justify-between items-center border-2 border-(--beige-oscuro-80)">
+      <article v-else class="">
+        <ul class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          <li v-for="doc in documentos" :key="doc.id" class="flex items-center gap-4 bg-blue-800/20 p-4 rounded-2xl">
             <div>
-              <p class="text-lg font-semibold text-gray-800">{{ doc.titulo || 'Sin título' }}</p>
+              <p class="text-md font-semibold">{{ doc.titulo || 'Sin título' }}</p>
               <p class="text-sm text-gray-500">{{ new Date(doc.fecha_subida).toLocaleString() }}</p>
             </div>
-            <div class="flex gap-4">
+            <div class="flex-1 flex flex-col items-end gap-4">
               <a :href="doc.url" v-target="_blank" rel="noopener noreferrer"
-                class="bg-(--verde-claro) text-(--blanco) px-4 py-2 rounded-md hover:bg-(--verde-principal) transition cursor-pointer">
+                class="cursor-pointer w-30 text-center border-2 border-cyan-600/50 px-3 py-1 rounded-full hover:border-teal-500 hover:bg-teal-500/50 transition-all duration-300">
                 Descargar
               </a>
               <button @click="verDocumento(doc.url)"
-                class="bg-(--verde-claro) text-(--blanco) px-4 py-2 rounded-md hover:bg-(--verde-principal) transition cursor-pointer">
+                class="cursor-pointer w-30 text-center border-2 border-cyan-600/50 px-3 py-1 rounded-full hover:border-teal-500 hover:bg-teal-500/50 transition-all duration-300">
                 Ver PDF
               </button>
             </div>
@@ -87,15 +83,5 @@ onMounted(() => {
       </div>
     </section>
 
-  </main>
+  </section>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-direction: column;
-  padding-block: 5rem;
-  border-bottom: 2px solid var(--beige-oscuro-40);
-  background: var(--beige-principal-20);
-}
-</style>

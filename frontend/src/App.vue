@@ -6,23 +6,24 @@ import ToastRenderer from './components/ToastRenderer.vue';
 </script>
 
 <template>
-  <section class="flex min-h-screen">
+  <main
+    class="flex min-h-screen bg-(--gris-suave-20) text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300">
     <ToastRenderer />
 
-    <article class="container_header flex flex-col justify-between h-screen">
+    <section class="container_header flex flex-col justify-between h-screen p-2 w-75">
       <Header />
       <Sidebar />
       <Footer />
-    </article>
+    </section>
 
-    <main class="w-screen relative overflow-hidden">
+    <main class="container relative overflow-hidden mx-auto">
       <router-view v-slot="{ Component }">
         <transition name="slide-view" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
     </main>
-  </section>
+  </main>
 </template>
 
 <style scoped>
@@ -55,11 +56,8 @@ import ToastRenderer from './components/ToastRenderer.vue';
 }
 
 .container_header {
-  background: linear-gradient(180deg, var(--verde-principal) 0%, var(--verde-claro) 100%);
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  color: var(--blanco);
 
   &::before {
     content: '';
@@ -70,28 +68,6 @@ import ToastRenderer from './components/ToastRenderer.vue';
     bottom: 0;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
     pointer-events: none;
-  }
-
-  & main {
-    background: linear-gradient(45deg,
-        var(--beige-principal),
-        var(--blanco));
-    background-size: 300% 300%;
-    animation: gradienteMovimiento 4s ease infinite;
-  }
-}
-
-@keyframes gradienteMovimiento {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
   }
 }
 </style>

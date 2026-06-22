@@ -1,14 +1,29 @@
+<script setup>
+const headerTitle = [
+  "text-2xl",
+  "font-semibold",
+  "text-balance",
+  "text-transparent",
+  "bg-clip-text",
+  "bg-linear-to-r",
+  "from-sky-600",
+  "to-sky-400",
+  "lg:font-bold",
+  "lg:text-3xl"
+]
+</script>
+
 <template>
-  <main class="container p-4">
-    <section class="flex gap-4 flex-col">
-      <article class="flex flex-col gap-6">
-        <header>
-          <h2 class="lg:text-2xl font-semibold">
+  <main class="container px-5 md:px-10 lg:px-15">
+    <section>
+      <article class="mb-6">
+        <header class="text-center h-35 place-content-center">
+          <h2 :class="headerTitle">
             ASOCIACIÓN USUARIOS ACUEDUCTO LA AGUADITA PLAN OPERACIONAL DE EMERGENCIA
             (POE)
           </h2>
         </header>
-        <p class="text-sm lg:text-lg px-6">
+        <p class="text-sm lg:text-lg">
           El presente Plan Operacional de Emergencia (POE) se formula como un instrumento técnico y de gestión orientado
           a
           fortalecer la capacidad de preparación, respuesta y recuperación del sistema de abastecimiento del Acueducto
@@ -29,12 +44,12 @@
         </p>
       </article>
 
-      <article class="flex flex-col gap-6">
-        <header>
-          <h2 class="lg:text-2xl font-semibold">OBJETIVO GENERAL</h2>
+      <article class="mb-6">
+        <header class="text-center h-35 place-content-center">
+          <h2 :class="headerTitle">OBJETIVO GENERAL</h2>
         </header>
 
-        <p class="text-sm lg:text-lg px-6">
+        <p class="text-sm lg:text-lg">
           Establecer los procedimientos técnicos, operativos y administrativos que deben implementarse de manera
           oportuna
           y
@@ -52,13 +67,12 @@
         </p>
       </article>
 
-
-      <article class="flex flex-col gap-6">
-        <header>
-          <h2 class="lg:text-2xl font-semibold">ALCANCE</h2>
+      <article class="mb-6">
+        <header class="text-center h-35 place-content-center">
+          <h2 :class="headerTitle">ALCANCE</h2>
         </header>
 
-        <p class="text-sm lg:text-lg px-6">
+        <p class="text-sm lg:text-lg">
           El presente Plan Operacional de Emergencia (POE) abarca de manera integral todos los componentes del sistema
           de
           abastecimiento del Acueducto Veredal La Aguadita, desde la captación de agua superficial en la Quebrada Chorro
@@ -70,11 +84,12 @@
         </p>
       </article>
 
-      <article class="flex flex-col gap-6">
-        <header>
-          <h2 class="lg:text-2xl font-semibold">CARACTERIZACION DEL SISTEMA DE ABASTECIMIENTO UBICACIÓN GEOGRAFICA</h2>
+      <article class="mb-6">
+        <header class="text-center h-35 place-content-center">
+          <h2 :class="headerTitle">CARACTERIZACION DEL SISTEMA DE ABASTECIMIENTO UBICACIÓN GEOGRAFICA</h2>
         </header>
-        <p class="text-sm lg:text-lg px-6">
+
+        <p class="text-sm lg:text-lg">
           El Acueducto Veredal La Aguadita esta ubicado en la vereda La Aguadita del Municipio de Fresno en el
           Departamento
           del Tolima. La fuente abastecedora del Acueducto Veredal La Aguadita es la Quebrada Chorro de Isidro,
@@ -86,14 +101,3 @@
     </section>
   </main>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-direction: column;
-  padding-block: 2.5rem;
-  border-bottom: 2px solid var(--beige-oscuro-40);
-  background: var(--beige-principal-20);
-  text-align: center;
-}
-</style>

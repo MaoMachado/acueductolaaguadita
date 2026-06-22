@@ -1,68 +1,69 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   /*VERDE BOSQUE*/
   --verde-principal: hsl(123, 46%, 34%);
-  --verde-principal-20: hsla(123, 46%, 34%, 0.20);
+  --verde-principal-20: hsla(123, 46%, 34%, 0.2);
   --verde-principal-40: hsla(123, 46%, 34%, 0.24);
-  --verde-principal-60: hsla(123, 46%, 34%, 0.60);
-  --verde-principal-80: hsla(123, 46%, 34%, 0.80);
-
-  /*BEIGE CLÁSICO*/
-  --beige-principal: hsl(60, 56%, 91%);
-  --beige-principal-20: hsla(60, 56%, 91%, 0.20);
-  --beige-principal-40: hsla(60, 56%, 91%, 0.24);
-  --beige-principal-60: hsla(60, 56%, 91%, 0.60);
-  --beige-principal-80: hsla(60, 56%, 91%, 0.80);
-
-  /* COLORES COMPLEMENTARIOS */
-  --verde-claro: hsl(122, 39%, 49%);
-  --verde-claro-20: hsla(122, 39%, 49%, 0.20);
-  --verde-claro-40: hsla(122, 39%, 49%, 0.40);
-  --verde-claro-60: hsla(122, 39%, 49%, 0.60);
-  --verde-claro-80: hsla(122, 39%, 49%, 0.80);
-
-  /*PARA TEXTOS Y ELEMENTOS IMPORTANTES*/
-  --verde-oscuro: hsl(124, 55%, 24%);
-  --verde-oscuro-20: hsla(124, 55%, 24%, 0.20);
-  --verde-oscuro-40: hsla(124, 55%, 24%, 0.40);
-  --verde-oscuro-60: hsla(124, 55%, 24%, 0.60);
-  --verde-oscuro-80: hsla(124, 55%, 24%, 0.80);
+  --verde-principal-60: hsla(123, 46%, 34%, 0.6);
+  --verde-principal-80: hsla(123, 46%, 34%, 0.8);
 
   /*PARA BORDES Y SEPARADORES*/
   --beige-oscuro: hsl(43, 38%, 73%);
-  --beige-oscuro-20: hsla(43, 38%, 73%, 0.20);
-  --beige-oscuro-40: hsla(43, 38%, 73%, 0.40);
-  --beige-oscuro-60: hsla(43, 38%, 73%, 0.60);
-  --beige-oscuro-80: hsla(43, 38%, 73%, 0.80);
+  --beige-oscuro-20: hsla(43, 38%, 73%, 0.2);
+  --beige-oscuro-40: hsla(43, 38%, 73%, 0.4);
+  --beige-oscuro-60: hsla(43, 38%, 73%, 0.6);
+  --beige-oscuro-80: hsla(43, 38%, 73%, 0.8);
 
   /*PARA FONDOS ALTERNATIVOS*/
   --crema: hsl(48, 100%, 93%);
-  --crema-20: hsla(48, 100%, 93%, 0.20);
+  --crema-20: hsla(48, 100%, 93%, 0.2);
   --crema-40: hsla(48, 100%, 93%, 0.24);
-  --crema-60: hsla(48, 100%, 93%, 0.60);
-  --crema-80: hsla(48, 100%, 93%, 0.80);
+  --crema-60: hsla(48, 100%, 93%, 0.6);
+  --crema-80: hsla(48, 100%, 93%, 0.8);
 
   /* COLORES DE APOYO */
   --blanco: hsl(0, 0%, 100%);
-  --blanco-20: hsla(0, 0%, 100%, 0.20);
+  --blanco-20: hsla(0, 0%, 100%, 0.2);
   --blanco-40: hsla(0, 0%, 100%, 0.24);
-  --blanco-60: hsla(0, 0%, 100%, 0.60);
-  --blanco-80: hsla(0, 0%, 100%, 0.80);
+  --blanco-60: hsla(0, 0%, 100%, 0.6);
+  --blanco-80: hsla(0, 0%, 100%, 0.8);
 
   /*PARA FONDOS NEUTROS*/
   --gris-suave: hsl(0, 0%, 94%);
-  --gris-suave-20: hsla(0, 0%, 94%, 0.20);
+  --gris-suave-20: hsla(0, 0%, 94%, 0.2);
   --gris-suave-40: hsla(0, 0%, 94%, 0.24);
-  --gris-suave-60: hsla(0, 0%, 94%, 0.60);
-  --gris-suave-80: hsla(0, 0%, 94%, 0.80);
+  --gris-suave-60: hsla(0, 0%, 94%, 0.6);
+  --gris-suave-80: hsla(0, 0%, 94%, 0.8);
 
-  /*PARA TEXTOS SECUNDARIOS*/
-  --marron-suave: hsl(16, 18%, 47%);
-  --marron-suave-20: hsla(16, 17%, 49%, 0.20);
-  --marron-suave-40: hsla(16, 17%, 49%, 0.24);
-  --marron-suave-60: hsla(16, 17%, 49%, 0.60);
-  --marron-suave-80: hsla(16, 17%, 49%, 0.80);
+  /* Azul Claro: Evoca agua limpia y fresca, perfecto para fondos o secciones principales.*/
+  --azul-claro: hsl(199, 91%, 64%);
+  --azul-claro-20: hsla(199, 91%, 64%, 0.2);
+  --azul-claro-40: hsla(199, 91%, 64%, 0.4);
+  --azul-claro-60: hsla(199, 91%, 64%, 0.6);
+  --azul-claro-80: hsla(199, 91%, 64%, 0.8);
+
+  /* Azul turquesa: Da sensación de pureza y vitalidad, ideal para destacar botones o enlaces.*/
+  --azul-turquesa: hsl(187, 100%, 38%);
+  --azul-turquesa-20: hsla(187, 100%, 38%, 0.2);
+  --azul-turquesa-40: hsla(187, 100%, 38%, 0.4);
+  --azul-turquesa-60: hsla(187, 100%, 38%, 0.6);
+  --azul-turquesa-80: hsla(187, 100%, 38%, 0.8);
+
+  /* Azul profundo: Transmite confianza y seriedad, útil para encabezados o el logo institucional.*/
+  --azul-profundo: hsl(212, 80%, 42%);
+  --azul-profundo-20: hsla(212, 80%, 42%, 0.2);
+  --azul-profundo-40: hsla(212, 80%, 42%, 0.4);
+  --azul-profundo-60: hsla(212, 80%, 42%, 0.6);
+  --azul-profundo-80: hsla(212, 80%, 42%, 0.8);
+
+  /* Azul verdoso: Combina la idea de agua con naturaleza, muy apropiado si el acueducto quiere reflejar sostenibilidad.*/
+  --azul-verdoso: hsl(174, 63%, 40%);
+  --azul-verdoso-20: hsla(174, 63%, 40%, 0.2);
+  --azul-verdoso-40: hsla(174, 63%, 40%, 0.4);
+  --azul-verdoso-60: hsla(174, 63%, 40%, 0.6);
+  --azul-verdoso-80: hsla(174, 63%, 40%, 0.8);
 
   /* FUENTES PRINCIPALES */
   --fuente-titulo: "Inter", sans-serif;
@@ -72,7 +73,6 @@
   --ancho-fijo-central: clamp(300px, 100vh, 1000px);
   --ancho-fijo-menu: clamp(300px, 100vh, 400px);
 }
-
 
 @font-face {
   font-family: "Inter";

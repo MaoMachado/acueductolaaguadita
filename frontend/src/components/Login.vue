@@ -2,8 +2,10 @@
 import { ref, defineEmits } from "vue";
 import userIcon from "../assets/images/user-svg.png";
 import passIcon from "../assets/images/pass-svg.png";
+import { useToast } from "../composables/useToast";
 
 const API = import.meta.env.VITE_API_URL;
+
 
 const usuario = ref("");
 const password = ref("");
@@ -37,10 +39,10 @@ async function login() {
       throw new Error(data.error || "Error de autenticación");
     }
 
-    // localStorage.setItem("logueado", "true");
     const data = await res.json();
     localStorage.setItem("token", data.token);
     emit("login-exitoso");
+    useToast().mostrar("Inicio de sesión exitoso", "success")
   } catch (err) {
     error.value = err.message;
   } finally {
@@ -50,32 +52,32 @@ async function login() {
 </script>
 
 <template>
-  <main class="flex gap-3  bg-(--gris-suave) rounded-xl">
-    <header class="h-full place-content-center p-6">
-      <h2 class="text-3xl font-semibold text-center text-(--verde-claro) mb-4">
+  <main class="flex gap-3 px-5 md:px-10 lg:px-15">
+    <header class="h-full place-content-center p-6 bg-sky-700/20 dark:bg-cyan-600/20 rounded-l-2xl">
+      <h2 class="text-3xl font-semibold text-center tracking-wider">
         Inicio De Sesión
       </h2>
     </header>
     <section class="p-6">
       <form @submit.prevent="login" class="flex flex-col gap-4">
         <div class="flex gap-2 items-center">
-          <label for="usuario" class="w-10 h-10  bg-(--crema) p-1 rounded-full">
+          <label for="usuario" class="w-10 h-10  bg-cyan-600/80 p-1 rounded-full">
             <img :src="userIcon" alt="Usuario" class="w-full h-full object-cover" />
           </label>
           <input type=" text" v-model="usuario" id="usuario"
-            class="text-xl bg-(--blanco) border-2 border-(--beige-oscuro-60) rounded-md px-4 py-1 focus:outline-none focus:border-(--verde-claro) focus:ring-1 focus:ring-(--verde-claro-60) transition-all duration-300" />
+            class="text-xl border-2 border-cyan-300/30 rounded-2xl px-4 py-1 focus:outline-none focus:border-cyan-400 transition-all duration-300" />
         </div>
 
         <div class="flex gap-2 items-center">
-          <label for="password" class="w-10 h-10  bg-(--crema) p-1 rounded-full">
+          <label for="password" class="w-10 h-10  bg-cyan-600/80 p-1 rounded-full">
             <img :src="passIcon" alt="Contraseña" class="w-full h-full object-cover" />
           </label>
           <input type="password" v-model="password" id="password" autocomplete="off"
-            class="text-xl bg-(--blanco) border-2 border-(--beige-oscuro-60) rounded-md px-4 py-1 focus:outline-none focus:border-(--verde-claro) focus:ring-1 focus:ring-(--verde-claro-60) transition-all duration-300" />
+            class="text-xl border-2 border-cyan-300/30 rounded-2xl px-4 py-1 focus:outline-none focus:border-cyan-400 transition-all duration-300" />
         </div>
 
         <button type="submit" :disabled="cargando"
-          class="w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed bg-(--verde-claro-40) hover:bg-(--verde-claro) font-bold py-2 rounded cursor-pointer">
+          class="w-full disabled:opacity-50 disabled:cursor-not-allowed rounded-full bg-cyan-600/30 hover:bg-cyan-600 font-bold py-2 cursor-pointer">
           <span v-if="cargando" class="flex items-center gap-2 justify-center">
             <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
@@ -86,12 +88,12 @@ async function login() {
           </span>
           <span v-else class="flex items-center gap-2 justify-center">Iniciar Sesión</span>
         </button>
-
-        <p v-if="error"
-          class="py-2 px-4 rounded-lg bg-red-50 border border-red-200 text-red-700 mt-2 text-xl text-center">
-          {{ error }}
-        </p>
       </form>
+
+      <p v-if="error"
+        class="py-2 px-4 rounded-lg bg-red-50 border border-red-200 text-red-700 mt-2 text-sm text-center">
+        {{ error }}
+      </p>
     </section>
   </main>
 </template>

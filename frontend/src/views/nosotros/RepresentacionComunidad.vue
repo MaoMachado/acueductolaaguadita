@@ -23,26 +23,22 @@ const data = {
 </script>
 
 <template>
-  <main class="grid place-content-center container h-full px-6">
-    <section class="bg-(--gris-suave-40) rounded-lg flex flex-col gap-6">
-      <header>
-        <h2 class="text-2xl text-center">{{ data.title }}</h2>
+  <article class="container h-full px-5 md:px-10 lg:px-15">
+    <section class="flex flex-col gap-6">
+      <header class="text-center h-50 place-content-center">
+        <h2
+          class="text-2xl font-semibold lg:font-bold text-balance lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400">
+          {{ data.title }}
+        </h2>
       </header>
-      <article class="px-6">
-        <ul v-for="item in data.items" :key="item.title" class="ml-4 text-base list-disc">
-          <li><strong>{{ item.title }}</strong> {{ item.text }}</li>
+      <article>
+        <ul class="text-base list-disc mx-auto w-fit">
+          <li v-for="item in data.items" :key="item.title" class="lg:text-xl mb-2">
+            <strong class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">{{ item.title }}</strong>
+            {{ item.text }}
+          </li>
         </ul>
       </article>
     </section>
-  </main>
+  </article>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-direction: column;
-  padding-block: 2.5rem;
-  border-bottom: 2px solid var(--beige-oscuro-40);
-  background: var(--beige-principal-20);
-}
-</style>

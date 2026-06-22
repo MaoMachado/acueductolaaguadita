@@ -1,6 +1,12 @@
+<script setup>
+import { RouterLink, useRoute } from 'vue-router';
+
+const route = useRoute();
+</script>
+
 <template>
-  <aside>
-    <nav class="flex flex-col">
+  <aside class="h-full place-content-center">
+    <nav class="flex flex-col bg-sky-400/20 rounded-2xl overflow-hidden">
       <RouterLink to="/" class="nav_item" :class="{ active: route.path === '/' }">Inicio</RouterLink>
       <RouterLink to="/documentos" class="nav_item" :class="{ active: route.path === '/documentos' }">Documentos
         Públicos</RouterLink>
@@ -14,12 +20,6 @@
     </nav>
   </aside>
 </template>
-
-<script setup>
-import { RouterLink, useRoute } from 'vue-router';
-
-const route = useRoute();
-</script>
 
 <style scoped>
 nav {
@@ -38,7 +38,7 @@ nav {
   &:hover {
     padding-left: 30px;
     background: rgba(255, 255, 255, 0.2);
-    border-left-color: var(--crema);
+    border-left-color: #1565C0;
   }
 }
 
@@ -59,12 +59,13 @@ nav {
 .nav_item:hover::before,
 .nav_item.active::before {
   opacity: 1;
+  background: #104e95;
 }
 
 .nav_item.active {
   background: rgba(255, 255, 255, 0.15);
-  border-left-color: var(--crema);
-  color: var(--blanco);
+  border-left-color: #104e95;
   font-weight: 600;
+  padding-left: 30px;
 }
 </style>

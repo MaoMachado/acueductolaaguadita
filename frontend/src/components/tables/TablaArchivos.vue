@@ -1,8 +1,8 @@
 <script setup>
 
 import { ref, onMounted, watch, defineProps, defineExpose } from 'vue';
-import { apiFetch } from '../utils/api';
-import { useToast } from '../composables/useToast.js';
+import { apiFetch } from '../../utils/api';
+import { useToast } from '../../composables/useToast.js';
 
 const archivos = ref([]);
 const cargando = ref(false);

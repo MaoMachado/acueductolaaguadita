@@ -1,5 +1,5 @@
 <script setup>
-import ListItem from '../components/ListItem.vue';
+import ListItem from '../components/common/ListItem.vue';
 
 const mantenimientoList = [
   {
@@ -58,17 +58,16 @@ const monitoreo = [
 </script>
 
 <template>
-  <main class="flex flex-col gap-3">
-    <header
-      class="flex flex-col gap-4 items-center text-center shadow bg-linear-to-t from-(--beige-principal-20) to-(--crema-20)">
+  <main class="flex flex-col gap-3 px-5 md:px-10 lg:px-15">
+    <header class="flex flex-col gap-4 items-center text-center justify-center h-60">
       <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-4">
         <h2
-          class="text-2xl font-semibold lg:font-bold lg:text-4xl text-transparent bg-clip-text bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro)">
+          class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400 text-shadow-sm text-shadow-white/10">
           Informe de Obras en
           Ejecución
           en la Asociación Acueducto La Aguadita
         </h2>
-        <p class="text-lg text-(--marron-suave) lg:text-xl">
+        <p class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">
           La Asociación Acueducto La Aguadita está comprometida con la gestión sostenible y eficiente del recurso
           hídrico
           en nuestra comunidad. A continuación, se presentan las obras en ejecución que estamos llevando a cabo para
@@ -77,7 +76,7 @@ const monitoreo = [
       </div>
     </header>
 
-    <section class="p-6 flex flex-col gap-4">
+    <section class="px-6 flex flex-col gap-4">
       <article>
         <div>
           <ol class="flex flex-col gap-4 list-decimal ml-4">
@@ -90,9 +89,9 @@ const monitoreo = [
         </div>
       </article>
 
-      <footer class="mt-6 bg-(--crema-60) p-3 rounded-lg">
+      <footer class="mt-6 bg-cyan-600/50 p-3 rounded-lg">
         <div>
-          <p class="text-justify font-light lg:text-lg text-(--marron-suave)">
+          <p class="text-center font-light lg:text-lg">
             Estas obras en ejecución demuestran nuestro compromiso con la gestión sostenible y eficiente del recurso
             hídrico en nuestra comunidad. Estamos trabajando arduamente para garantizar la calidad y disponibilidad
             del
@@ -103,12 +102,3 @@ const monitoreo = [
     </section>
   </main>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-direction: column;
-  padding-block: 2.5rem;
-  border-bottom: 2px solid var(--beige-oscuro-40);
-}
-</style>

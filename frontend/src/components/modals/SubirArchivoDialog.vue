@@ -8,8 +8,8 @@ import {
   onBeforeUnmount,
   computed,
 } from "vue";
-import { apiFetch } from "../utils/api";
-import { useToast } from "../composables/useToast.js";
+import { apiFetch } from "../../utils/api";
+import { useToast } from "../../composables/useToast.js";
 
 const toast = useToast();
 

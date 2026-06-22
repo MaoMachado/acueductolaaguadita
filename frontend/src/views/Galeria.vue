@@ -87,22 +87,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="flex flex-col gap-3">
-    <header class="backdrop-blur-md bg-white/80 shadow-lg sticky top-0 z-40 border-b border-emerald-100">
-      <div class="max-w-7xl mx-auto px-6 py-8">
+  <section class="flex flex-col gap-3 px-5 md:px-10 lg:px-15">
+    <header class="flex flex-col gap-4 items-center text-center justify-center h-60">
+      <div class="max-w-7xl mx-auto">
         <div class="text-center flex flex-col gap-4">
-          <h1
-            class="text-5xl font-bold bg-linear-to-r from-(--verde-oscuro-60) to-(--verde-oscuro) bg-clip-text text-transparent">
+          <h2
+            class="text-2xl font-semibold lg:font-bold lg:text-5xl text-transparent bg-clip-text bg-linear-to-r from-sky-600 to-sky-400 text-shadow-sm text-shadow-white/10">
             Galería De Evidencias Comunitarias
-          </h1>
-          <p class="text-lg text-(--marron-suave) lg:text-xl">
+          </h2>
+          <p class="text-lg text-cyan-800 dark:text-cyan-200 lg:text-xl">
             Fotografías y registros visuales de las actividades de la Asociación Acueducto La Aguadita.
           </p>
 
           <article class="max-w-md mx-auto">
             <div class="relative">
               <input type="text" v-model="filtroTexto" placeholder="Buscar Imagenes"
-                class="w-full pl-12 pr-4 py-3 rounded-full border-2 border-(--beige-oscuro-80) focus:border-(--beige-oscuro) focus:outline-none transition-colors bg-white/90 backdrop-blur-sm">
+                class="w-full pl-12 pr-4 py-3 rounded-full border-2 border-cyan-600/50 focus:border-cyan-600 focus:outline-none transition-colors bg- backdrop-blur-sm">
               <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-(--beige-oscuro-60)"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -160,7 +160,7 @@ onMounted(() => {
         <article v-for="(img, index) in imagenesFiltradas" :key="img.id" class="group cursor-pointer"
           @click="abrirModal(img)">
           <figure
-            class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+            class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 border-cyan-600/50">
             <!-- Contenedor de imagen con overlay -->
             <div class="relative overflow-hidden aspect-square">
               <img :src="img.url" :alt="img.nombre"
@@ -187,7 +187,7 @@ onMounted(() => {
 
               <!-- Indicador de posición -->
               <div
-                class="absolute top-4 right-4 bg-emerald-500 text-white text-xs px-2 py-1 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                class="absolute top-4 right-4 bg-sky-500 text-white text-xs px-2 py-1 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {{ index + 1 }}/{{ imagenesFiltradas.length }}
               </div>
             </div>
@@ -195,7 +195,7 @@ onMounted(() => {
             <!-- Caption mejorado -->
             <figcaption class="p-4">
               <h3
-                class="font-semibold text-gray-800 text-center group-hover:text-emerald-600 transition-colors duration-300 line-clamp-2">
+                class="font-semibold text-gray-800 text-center group-hover:text-sky-600 transition-colors duration-300 line-clamp-2">
                 {{ img.nombre }}
               </h3>
             </figcaption>
@@ -249,7 +249,7 @@ onMounted(() => {
               <!-- Información de la imagen -->
               <div class="mt-6 text-white">
                 <h2 class="text-2xl font-bold mb-2">{{ imagenSeleccionada?.nombre }}</h2>
-                <p class="text-emerald-400">
+                <p class="text-sky-400">
                   {{imagenes.findIndex(img => img.id === imagenSeleccionada?.id) + 1}} de {{ imagenes.length }}
                 </p>
               </div>

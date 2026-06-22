@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import SubirArchivoDialog from "../components/SubirArchivoDialog.vue";
-import TablaArchivos from "../components/TablaArchivos.vue";
-import SubirImagenDialog from "../components/SubirImagenDialog.vue";
-import TablaImagenes from "../components/TablaImagenes.vue";
+import { useToast } from "../composables/useToast.js";
+import SubirArchivoDialog from "../components/modals/SubirArchivoDialog.vue";
+import TablaArchivos from "../components/tables/TablaArchivos.vue";
+import SubirImagenDialog from "../components/modals/SubirImagenDialog.vue";
+import TablaImagenes from "../components/tables/TablaImagenes.vue";
 import Login from "../components/Login.vue";
 
 const cargando = ref(false);
@@ -34,6 +35,7 @@ function manejarLogin() {
 }
 
 function manejarLogout() {
+  useToast().mostrar("Cerrando sesión", "success")
   token.value = null;
   localStorage.removeItem('token')
 }
